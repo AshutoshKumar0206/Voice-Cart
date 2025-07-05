@@ -10,13 +10,28 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
+  password: {
+    type: String,
+    required: true
+  },
+  phone: {
+    type: String,
+    required: true
+  },
+  token: {
+    type: String,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
   cart: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Product'
+    ref: 'product'
   }],
   orders: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Order'
+    ref: 'order'
   }]
 }, { timestamps: true });
 
