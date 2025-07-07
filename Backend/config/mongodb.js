@@ -1,8 +1,11 @@
 const mongoose = require("mongoose");
-
-const connectMongoDB =  () => {
+require('dotenv').config();
+const connectMongoDB =  (req, res) => {
   try {
-        mongoose.connect(process.env.MONGO_URL).then(() => {
+        mongoose.connect(process.env.MONGO_URL, {
+          useNewUrlParser: true,
+          useUnifiedTopology: true,
+        }).then(() => {
           console.log("connected to mongodb");
         }).catch((err) => {
             res.status(500).json({

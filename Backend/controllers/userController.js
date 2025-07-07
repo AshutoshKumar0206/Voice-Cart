@@ -2,7 +2,8 @@ const userModel = require('../model/user');
 const OTP = require('../model/otp');
 require('dotenv').config();
 const bcrypt = require('bcrypt');
-const { overwriteMiddlewareResult } = require('mongoose');
+const jwt = require('jsonwebtoken');  
+
 module.exports.signUp = async (req, res) => {
     try {
         const { name, email, password, confirmPassword, phone } = req.body;
@@ -69,6 +70,7 @@ module.exports.signIn = async (req, res) => {
             });
         }
         const user = await userModel.findOne({ email });
+        console.log("user:", user);
         if (!user) {
             return res.status(400).json({
                 success: false,
@@ -105,6 +107,7 @@ module.exports.signIn = async (req, res) => {
         }
         
     } catch (error) {
+        console.log("Error in signIn:", error);
         res.status(500).json({
             success: false,
             message: "Unable to signIn user"
