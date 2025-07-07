@@ -18,12 +18,15 @@ const productSchema = new mongoose.Schema({
   },
   image: {
     type:String,
-    required: true
   },
   inStock: {
     type: Boolean,
     default: true
-  }
+  },
+  quantity: {
+    type: Number,
+    default: 1
+  },
 }, { timestamps: true });
 
 module.exports = mongoose.model('product', productSchema);

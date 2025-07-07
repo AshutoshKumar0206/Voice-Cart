@@ -1,4 +1,4 @@
-const userModel = require("../models/User");
+const userModel = require("../model/user");
 const jwt = require("jsonwebtoken");
 require('dotenv').config();
 
