@@ -3,8 +3,6 @@ require('dotenv').config();
 const connectMongoDB =  (req, res) => {
   try {
         mongoose.connect(process.env.MONGO_URL, {
-          useNewUrlParser: true,
-          useUnifiedTopology: true,
         }).then(() => {
           console.log("connected to mongodb");
         }).catch((err) => {
