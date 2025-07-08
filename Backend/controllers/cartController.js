@@ -8,6 +8,7 @@ module.exports.addToCart = async (req, res) => {
         let user_id = req.user.id;
         console.log("User ID:", user_id);
         let productId = req.params.id;
+        console.log("Product ID:", productId);
         if (!user_id) {
             return res.status(400).json({
                 success: false,
