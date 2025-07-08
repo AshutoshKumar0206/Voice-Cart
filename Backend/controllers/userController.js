@@ -3,7 +3,12 @@ const OTP = require('../model/otp');
 require('dotenv').config();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');  
-
+const mailSender = require('../utils/mailSender');
+const emailTemplate = require('../mail/emailVerificationTemplate');
+const otpGenerator = require('otp-generator');
+const notConfirmedModel = require('../model/notConfirmed');
+const pendingUserModel = require('../model/pendingUser');
+const mongoose = require('mongoose');
 module.exports.signUp = async (req, res) => {
     try {
         const { name, email, password, confirmPassword, phone } = req.body;
