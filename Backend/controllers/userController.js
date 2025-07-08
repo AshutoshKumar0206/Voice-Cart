@@ -4,6 +4,7 @@ require('dotenv').config();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const emailTemplate = require('../mail/emailVerificationTemplate');
+const mailSender = require('../utils/mailSender');
 const otpGenerator = require('otp-generator');
 const notConfirmedModel = require('../model/notConfirmed');
 const pendingUserModel = require('../model/pendingUser');
