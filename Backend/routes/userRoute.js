@@ -15,4 +15,7 @@ router.post("/verifyotp", userController.verifyotp);
 // User Dashboard Route
 router.get("/dashboard/:id",isAuthenticated, userController.dashboard);
 
+// Get Current User Route
+router.get("/me", isAuthenticated, userController.getMe);
+
 module.exports = router;
