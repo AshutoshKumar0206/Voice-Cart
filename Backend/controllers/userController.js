@@ -202,13 +202,15 @@ module.exports.verifyotp = async (req, res) => {
 
 module.exports.logout = async (req, res, next) => {
   try {
-    const token = req.headers.authorization.split(" ")[1];
+    const token = req.cookies.token || req.headers.authorization.split(" ")[1];
     if (!token) {
         return res.status(401).json({
             success: false,
             message: "No token provided",
         });
     }
+
+    res.clearCookie("token");
 
     res.status(200).json({
         message: "User Logged out",
@@ -267,5 +269,31 @@ module.exports.dashboard = async (req, res, next) => {
         success: false,
         message: err,
       });
+  }
+};
+
+module.exports.getMe = async (req, res) => {
+  try {
+    // req.user is already set by isAuthenticated middleware
+    const userId = req.user.id;
+
+    const user = await userModel.findById(userId).select('-password');
+    // console.log("user:", user);
+    res.status(200).json({
+      success: true,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        createdAt: user.createdAt,
+        orders: user.orders
+      },
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to retrieve user details",
+    });
   }
 };
