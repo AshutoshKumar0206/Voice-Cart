@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const connectMongoDB = require('./config/mongodb');
 const fileUpload = require('express-fileupload');
 const { cloudinaryConnect } = require('./config/cloudinary');
+const mongoose = require('mongoose');
 const productRoute = require('./routes/productsRoute');
 const indexRoute = require('./routes/indexRoute');
 const userRoute = require('./routes/userRoute');
@@ -13,9 +14,6 @@ const voiceRoute = require('./routes/voiceRoute');
 const dotenv = require('dotenv');
 
 dotenv.config();
-
-app.use(cookieParser());
-app.use(express.json());
 
 const allowedOrigins = ['https://walmart-sparkathon-eight.vercel.app', 'http://localhost:3000'];
 
