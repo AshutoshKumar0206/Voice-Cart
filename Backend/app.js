@@ -29,6 +29,13 @@ app.use(cors({
 app.use(cookieParser());
 app.use(express.json());
 
+const corsOptions = {
+    origin: allowedOrigins,
+    credentials: true, // if you're using cookies or authorization headers
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+};
+app.use(cors(corsOptions));
 connectMongoDB();
 
 app.use('/products', productRoute);
