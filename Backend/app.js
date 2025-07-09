@@ -1,15 +1,21 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const connectMongoDB = require('./config/mongodb');
+const fileUpload = require('express-fileupload');
+const { cloudinaryConnect } = require('./config/cloudinary');
 const productRoute = require('./routes/productsRoute');
 const indexRoute = require('./routes/indexRoute');
 const userRoute = require('./routes/userRoute');
 const cartRoute = require('./routes/cartRoute');
 const voiceRoute = require('./routes/voiceRoute');
-const cookieParser = require('cookie-parser');
-require('dotenv').config();
-const PORT = process.env.PORT || 4000;
+const dotenv = require('dotenv');
+
+dotenv.config();
+
+app.use(cookieParser());
+app.use(express.json());
 
 const allowedOrigins = ['https://walmart-sparkathon-eight.vercel.app', 'http://localhost:3000'];
 
@@ -23,13 +29,21 @@ const corsOptions = {
     allowedHeaders: ['Content-Type', 'Authorization'],
 };
 app.use(cors(corsOptions));
-connectMongoDB();
-app.use('/products', productRoute);
-app.use("/", indexRoute);
-app.use("/user", userRoute);
-app.use("/cart", cartRoute);
-app.use("/voice", voiceRoute);
+app.use(
+    fileUpload({
+        useTempFiles:true,
+		tempFileDir:"/tmp",
+        limits: { fileSize: 50 * 1024 * 1024 }
+	})
+)
 
-app.listen(`${PORT}`, ()=>{
-    console.log(`Server is running on port ${PORT}`);
-});
+connectMongoDB();
+cloudinaryConnect();
+app.use('/products', productRoute);
+app.use('/', indexRoute);
+app.use('/user', userRoute);
+app.use('/cart', cartRoute);
+app.use('/voice', voiceRoute);
+
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

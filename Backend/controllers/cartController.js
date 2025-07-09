@@ -8,6 +8,8 @@ module.exports.addToCart = async (req, res) => {
         let user_id = req.user.id;
         console.log("User ID:", user_id);
         let productId = req.params.id;
+        let discount = req.body.discount || 0;
+        console.log("Discount:", discount);
         console.log("Product ID:", productId);
         if (!user_id) {
             return res.status(400).json({
@@ -37,7 +39,9 @@ module.exports.addToCart = async (req, res) => {
             if (!cart) {
             cart = new Cart({
                 user: user_id,
-                items: [{ product: productId }]
+                items: [{ product: productId 
+                        , discount: discount
+                }]
             });
             } else {
                  // Check if product already exists in cart
@@ -48,7 +52,7 @@ module.exports.addToCart = async (req, res) => {
                 if (itemIndex >= 0) {
                     cart.items[itemIndex].quantity += 1;
                 } else {
-                    cart.items.push({ product: productId, quantity: 1 });
+                    cart.items.push({ product: productId, quantity: 1, discount: discount });
                 }
             }
 
@@ -73,7 +77,7 @@ module.exports.getCart = async (req, res) => {
     try {
         let user_id = req.params.id;
         let cart = await Cart.findOne({ user: user_id }).populate('items.product');
-        
+        console.log("Cart:", cart);
         if (!cart) {
             return res.status(404).json({
                 success: false,
@@ -84,6 +88,7 @@ module.exports.getCart = async (req, res) => {
         res.status(200).json({
             success: true,
             cart
+
         });
     } catch (error) {
         console.error("Error fetching cart:", error);
