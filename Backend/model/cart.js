@@ -14,6 +14,12 @@ const cartSchema = new mongoose.Schema({
       type: Number,
       default: 1
     },
+    discount: {
+      type: Number,
+      default: 0,
+      min: 5,
+      max: 20
+    }
   }]
 
 }, { timestamps: true });
