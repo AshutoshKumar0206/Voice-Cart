@@ -26,7 +26,7 @@ app.use((req, res, next) =>{
     );
     next(); 
 })
-
+app.use(cors());
 connectMongoDB();
 app.use('/products', productRoute);
 app.use("/", indexRoute);
