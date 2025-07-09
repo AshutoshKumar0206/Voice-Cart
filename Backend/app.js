@@ -23,7 +23,6 @@ const corsOptions = {
     allowedHeaders: ['Content-Type', 'Authorization'],
 };
 app.use(cors(corsOptions));
-app.use('*', cors(corsOptions));
 connectMongoDB();
 app.use('/products', productRoute);
 app.use("/", indexRoute);
