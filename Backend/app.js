@@ -1,21 +1,17 @@
 const express = require('express');
-const app = express();
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-require('dotenv').config();
+const dotenv = require('dotenv');
 
-const connectMongoDB = require('./config/mongodb');
-const productRoute = require('./routes/productsRoute');
-const indexRoute = require('./routes/indexRoute');
-const userRoute = require('./routes/userRoute');
-const cartRoute = require('./routes/cartRoute');
-const voiceRoute = require('./routes/voiceRoute');
+dotenv.config();
+const app = express();
 
-const PORT = process.env.PORT || 4000;
+const allowedOrigins = [
+  'https://walmart-sparkathon-eight.vercel.app',
+  'http://localhost:3000',
+];
 
-const allowedOrigins = ['https://walmart-sparkathon-eight.vercel.app', 'http://localhost:3000'];
-
-app.use(cors({
+const corsOptions = {
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
@@ -24,20 +20,26 @@ app.use(cors({
     }
   },
   credentials: true,
-}));
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // preflight support
 
 app.use(cookieParser());
 app.use(express.json());
 
-const corsOptions = {
-    origin: allowedOrigins,
-    credentials: true, // if you're using cookies or authorization headers
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-};
-app.use(cors(corsOptions));
-app.use('*', cors(corsOptions));
-connectMongoDB();
+// Logging for debug
+app.use((req, res, next) => {
+  console.log('Origin:', req.headers.origin);
+  next();
+});
+
+// Your routes
+const productRoute = require('./routes/productsRoute');
+const indexRoute = require('./routes/indexRoute');
+const userRoute = require('./routes/userRoute');
+const cartRoute = require('./routes/cartRoute');
+const voiceRoute = require('./routes/voiceRoute');
 
 app.use('/products', productRoute);
 app.use('/', indexRoute);
@@ -45,6 +47,5 @@ app.use('/user', userRoute);
 app.use('/cart', cartRoute);
 app.use('/voice', voiceRoute);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+const PORT = process.env.PORT || 4000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
