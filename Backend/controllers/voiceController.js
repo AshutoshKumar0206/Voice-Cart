@@ -123,11 +123,6 @@ module.exports.interpretCommand = async (req, res) => {
             });
     }
 
-    return res.status(200).json({
-      success: true,
-      data: parsedText,
-    });
-
   } catch (error) {
     console.error("Gemini interpret error:", error.message);
     return res.status(500).json({
