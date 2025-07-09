@@ -21,7 +21,6 @@ const productSchema = new mongoose.Schema({
   },
   discount: {
     type:Number,
-    default: 0,
     min: 5,
     max: 20
   },

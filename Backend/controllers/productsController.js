@@ -1,4 +1,5 @@
 const product = require('../model/product');
+const { uploadImageToCloudinary } = require('../utils/imageUploader');
 require('dotenv').config();
 
 module.exports.createProduct = async (req, res) => {
@@ -10,14 +11,34 @@ try{
             message: "Please provide all required fields" 
         });
     }
-    let newProduct = new product(req.body);
-    let savedProduct = await newProduct.save();
-    console.log(savedProduct);
+    console.log("Request Files:", req.files);
+    if (!req.files || !req.files.displayPicture) {
+        return res.status(400).json({
+            success: false,
+            message: "No image file provided",
+        });
+    }
+    let displayPicture = req.files.displayPicture;
+    let image = await uploadImageToCloudinary(
+        displayPicture,
+        process.env.FOLDER,
+        1000,
+        1000
+    )
+    console.log("Image URL:", image);
+    let newProduct = await product.create({
+        product_name: product_name,
+        price: price,
+        description: description,
+        quantity: quantity,
+        image: image.secure_url
+    });
+    console.log(newProduct);
     
     res.status(201).json({ 
         success: true, 
         message: "Product created successfully", 
-        product: savedProduct 
+        product: newProduct 
     });
 
 } catch (error) {
@@ -73,5 +94,3 @@ module.exports.getProductById = async (req, res) => {
         });
     }
 }
-
-

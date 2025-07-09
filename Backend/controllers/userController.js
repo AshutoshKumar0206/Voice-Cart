@@ -1,4 +1,6 @@
 const userModel = require('../model/user');
+const {uploadImageToCloudinary} = require('../utils/imageUploader');
+const Product = require('../model/product');
 const OTP = require('../model/otp');
 require('dotenv').config();
 const bcrypt = require('bcrypt');
