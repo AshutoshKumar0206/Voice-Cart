@@ -15,24 +15,14 @@ const allowedOrigins = ['https://walmart-sparkathon-eight.vercel.app', 'http://l
 
 app.use(cookieParser())
 app.use(express.json());
-app.use((req, res, next) =>{
-    const origin = req.headers.origin;
-    if(allowedOrigins.includes(origin)){
-        res.setHeader('Access-Control-Allow-Origin', origin);
-    }   
-    res.header(
-        'Access-Control-Allow-Methods', 
-        'Origin, X-Requested-With, Content-Type, Accept'
-    );
-    next(); 
-})
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*'); // allow all domains
-    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    next();
-});
-app.use(cors());
+
+const corsOptions = {
+    origin: allowedOrigins,
+    credentials: true, // if you're using cookies or authorization headers
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+};
+app.use(cors(corsOptions));
 connectMongoDB();
 app.use('/products', productRoute);
 app.use("/", indexRoute);
