@@ -11,14 +11,21 @@ const cookieParser = require('cookie-parser');
 require('dotenv').config();
 const PORT = process.env.PORT || 4000;
 
-const allowedOrigins = ["https://walmart-sparkathon-eight.vercel.app", "http://localhost:3000"];
+const allowedOrigins = ['https://walmart-sparkathon-eight.vercel.app', 'http://localhost:3000'];
 
 app.use(cookieParser())
 app.use(express.json());
-app.use(cors({
-    origin: allowedOrigins,
-    credentials: true
-}));
+app.use((req, res, next) =>{
+    const origin = req.headers.origin;
+    if(allowedOrigins.includes(origin)){
+        res.setHeader('Access-Control-Allow-Origin', origin);
+    }   
+    res.header(
+        'Access-Control-Allow-Methods', 
+        'Origin, X-Requested-With, Content-Type, Accept'
+    );
+    next(); 
+})
 
 connectMongoDB();
 app.use('/products', productRoute);
