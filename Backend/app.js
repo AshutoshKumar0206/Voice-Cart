@@ -11,7 +11,7 @@ const cookieParser = require('cookie-parser');
 require('dotenv').config();
 const PORT = process.env.PORT || 4000;
 
-const allowedOrigins = ["http://localhost:3000"];
+const allowedOrigins = ["https://walmart-sparkathon-eight.vercel.app", "http://localhost:3000"];
 
 app.use(cookieParser())
 app.use(express.json());
