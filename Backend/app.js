@@ -3,6 +3,8 @@ const app = express();
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const connectMongoDB = require('./config/mongodb');
+const fileUpload = require('express-fileupload');
+const { cloudinaryConnect } = require('./config/cloudinary');
 const mongoose = require('mongoose');
 const productRoute = require('./routes/productsRoute');
 const indexRoute = require('./routes/indexRoute');
@@ -13,37 +15,6 @@ const dotenv = require('dotenv');
 const path = require('path');
 
 dotenv.config();
-
-// const allowedOrigins = [
-//   'https://walmart-sparkathon-eight.vercel.app',
-//   'http://localhost:3000',
-// ];
-
-// const corsOptions = {
-//   origin: function (origin, callback) {
-//     if (!origin || allowedOrigins.includes(origin)) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error('Not allowed by CORS'));
-//     }
-//   },
-//   credentials: true,
-// };
-
-// app.use(cors(corsOptions));
-// app.options('*', cors(corsOptions)); // preflight support
-
-app.use(cookieParser());
-app.use(express.json());
-
-// Logging for debug
-// app.use((req, res, next) => {
-//   console.log('Origin:', req.headers.origin);
-//   next();
-// });
-
-// Your routes
-
 
 const allowedOrigins = ['https://walmart-sparkathon-eight.vercel.app', 'http://localhost:3000'];
 
@@ -58,7 +29,16 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use(
+    fileUpload({
+        useTempFiles:true,
+		tempFileDir:"/tmp",
+        limits: { fileSize: 50 * 1024 * 1024 }
+	})
+)
+
 connectMongoDB();
+cloudinaryConnect();
 app.use('/products', productRoute);
 app.use('/', indexRoute);
 app.use('/user', userRoute);
