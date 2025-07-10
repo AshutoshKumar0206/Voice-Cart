@@ -46,7 +46,7 @@ export default function Hero() {
           src="/home/hero.png"
           alt="Person giving voice command"
           fill
-          className="object-contain mt-24 md:mt-0"
+          className="object-contain mt-24 md:mt-6"
           priority
         />
       </div>

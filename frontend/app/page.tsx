@@ -5,11 +5,14 @@ import HowItWorks from "@/components/Hero/HowItWorks";
 import Navbar from "@/components/Navbar";
 import Newsletter from "@/components/Hero/Newsletter";
 import TopDealsSlider from "@/components/Hero/TopDeals";
+import { UserProvider } from "@/context/UserContext";
 
 export default function HomePage() {
   return (
     <>
-      <Navbar />
+      <UserProvider>
+        <Navbar />
+      </UserProvider>
       <Hero />
       <TopDealsSlider />
       <AllProductsPage />

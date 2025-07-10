@@ -5,6 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { useState, useEffect } from "react";
 import CartItem from "@/components/CartItems"; // You’ll create this
 import { ShoppingCart } from "lucide-react";
+import Link from "next/link";
 
 interface CartProduct {
   id: string;
@@ -95,7 +96,7 @@ export default function CartPage() {
             </div>
 
             <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white text-md py-2 rounded-lg">
-              Proceed to Checkout
+              <Link href="/checkout">Proceed to Checkout</Link>
             </Button>
           </div>
         </div>

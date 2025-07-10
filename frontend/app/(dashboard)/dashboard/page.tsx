@@ -19,7 +19,6 @@ const categories = [
 
 export default function DashboardPage() {
   const { user, loading } = useUser();
-  console.log(user)
   const router = useRouter();
 
   useEffect(() => {

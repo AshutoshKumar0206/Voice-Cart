@@ -18,7 +18,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import Link from "next/link";
-import { useUser } from "@/context/UserContext";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   email: z.string().email("Enter a valid email"),
@@ -29,7 +29,6 @@ type SignInFormValues = z.infer<typeof formSchema>;
 
 export default function SignInPage() {
   const router = useRouter();
-  const { setUser } = useUser();
   const [serverError, setServerError] = useState<string | null>(null);
 
   const form = useForm<SignInFormValues>({
@@ -46,11 +45,12 @@ export default function SignInPage() {
       const res = await axiosClient.post("/user/signin", data);
       console.log(res);
       if(res.status === 200) {
-        setUser(res.data.user);
-        console.log(res.data.user);
+        toast.success("Login successful!");
         router.push("/dashboard");
-        console.log("Login Success", res.data);
         return
+      }
+      else{
+        toast.error("Login failed. Try again.");
       }
     } catch (err: any) {
       setServerError(err?.response?.data?.message || "Login failed");
