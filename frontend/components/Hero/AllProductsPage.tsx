@@ -117,9 +117,8 @@ export default function AllProductsPage() {
                 <Image
                   src={product.image}
                   alt={product.title}
-                  layout="fill"
-                  objectFit="contain"
-                  className="transition-transform duration-500 group-hover:scale-110"
+                  fill
+                  className="transition-transform duration-500 group-hover:scale-110 object-contain"
                 />
               </div>
 
