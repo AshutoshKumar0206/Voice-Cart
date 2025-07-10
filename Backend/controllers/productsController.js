@@ -11,14 +11,14 @@ try{
             message: "Please provide all required fields" 
         });
     }
-    console.log("Request Files:", req.files);
-    if (!req.files || !req.files.displayPicture) {
+    console.log("Request Files:", req.file);
+    if (!req.file) {
         return res.status(400).json({
             success: false,
             message: "No image file provided",
         });
     }
-    let displayPicture = req.files.displayPicture;
+    let displayPicture = req.file;
     let image = await uploadImageToCloudinary(
         displayPicture,
         process.env.FOLDER,
