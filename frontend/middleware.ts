@@ -22,5 +22,5 @@ export function middleware(req: NextRequest) {
 
 // 🔁 Enable middleware only for these routes
 export const config = {
-  matcher: ['/dashboard/:path*', '/signin', '/signup', '/profile', '/cart'],
+  matcher: ['/dashboard/:path*', '/profile/:path*', '/cart/:path*', '/signin', '/signup'],
 };

@@ -6,14 +6,17 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
+import axios from 'axios';
+import { toast } from 'sonner';
 
 export default function CreateProductPage() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [formData, setFormData] = useState({
-    name: '',
+    product_name: '',
     category: '',
     quantity: '',
+    price: '',
     description: '',
   });
 
@@ -33,10 +36,41 @@ export default function CreateProductPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Submit logic here
-    console.log({ ...formData, imageFile });
+
+    try {
+      const data = new FormData();
+      data.append('product_name', formData.product_name);
+      data.append('category', formData.category);
+      data.append('quantity', formData.quantity);
+      data.append('price', formData.price);
+      data.append('description', formData.description);
+      if (imageFile) {
+        data.append('image', imageFile);
+      }
+
+      const res = await axios.post('http://localhost:5000/api/products/createProduct', data, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      toast.success('Product created successfully');
+      console.log(res.data);
+      setFormData({
+        product_name: '',
+        category: '',
+        quantity: '',
+        price: '',
+        description: '',
+      });
+      setImageFile(null);
+      setPreviewUrl(null);
+    } catch (err: any) {
+      console.error(err);
+      toast.error('Failed to create product');
+    }
   };
 
   return (
@@ -72,8 +106,8 @@ export default function CreateProductPage() {
           <label className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
           <Input
             type="text"
-            name="name"
-            value={formData.name}
+            name="product_name"
+            value={formData.product_name}
             onChange={handleChange}
             placeholder="Wireless Headphones"
             required
@@ -102,6 +136,20 @@ export default function CreateProductPage() {
             value={formData.quantity}
             onChange={handleChange}
             placeholder="10"
+            min={1}
+            required
+          />
+        </div>
+
+        {/* Price */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Price (in ₹)</label>
+          <Input
+            type="number"
+            name="price"
+            value={formData.price}
+            onChange={handleChange}
+            placeholder="2999"
             min={1}
             required
           />

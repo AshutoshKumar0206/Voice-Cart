@@ -10,6 +10,7 @@ const userRoute = require('./routes/userRoute');
 const cartRoute = require('./routes/cartRoute');
 const voiceRoute = require('./routes/voiceRoute');
 const dotenv = require('dotenv');
+const path = require('path');
 
 dotenv.config();
 
@@ -56,6 +57,7 @@ const corsOptions = {
     allowedHeaders: ['Content-Type', 'Authorization'],
 };
 app.use(cors(corsOptions));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 connectMongoDB();
 app.use('/products', productRoute);
 app.use('/', indexRoute);

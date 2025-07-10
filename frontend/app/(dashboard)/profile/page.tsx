@@ -40,7 +40,7 @@ export default function ProfilePage() {
   const [userProfile, setUserProfile] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const { user, setUser } = useUser();
+  const { user, setUser, logout } = useUser();
   const router = useRouter();
 
   useEffect(() => {
@@ -60,13 +60,7 @@ export default function ProfilePage() {
   }, [user]);
 
   const handleLogout = async () => {
-    try {
-      await axiosClient.post('/user/logout');
-      setUser(null); // ✅ clear context
-      router.push('/'); // ✅ redirect
-    } catch (err) {
-      console.error('Logout failed', err);
-    }
+    logout();
   };
 
   if (loading) {

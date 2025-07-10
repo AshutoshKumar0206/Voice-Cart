@@ -1,6 +1,12 @@
-'use client';
+"use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 import axiosClient from "@/lib/axios";
 
 // Define User type
@@ -8,7 +14,7 @@ interface User {
   id: string;
   name: string;
   email: string;
-  cart: any[]
+  cart: any[];
 }
 
 // Define context value type
@@ -16,10 +22,13 @@ interface UserContextType {
   user: User | null;
   setUser: (user: User | null) => void;
   loading: boolean;
+  logout: () => Promise<void>;
 }
 
 // ✅ Define & export context
-export const UserContext = createContext<UserContextType | undefined>(undefined);
+export const UserContext = createContext<UserContextType | undefined>(
+  undefined
+);
 
 // ✅ Provider component
 export function UserProvider({ children }: { children: ReactNode }) {
@@ -29,7 +38,9 @@ export function UserProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axiosClient.get('/user/me', { withCredentials: true });
+        const res = await axiosClient.get("/user/me", {
+          withCredentials: true,
+        });
         setUser(res.data.user);
       } catch {
         setUser(null);
@@ -41,8 +52,18 @@ export function UserProvider({ children }: { children: ReactNode }) {
     fetchUser();
   }, []);
 
+  const logout = async () => {
+    try {
+      await axiosClient.post("/user/logout");
+      setUser(null); // ✅ clear context
+      window.location.href = "/"; // ✅ redirect
+    } catch (err) {
+      console.error("Logout failed", err);
+    }
+  };
+
   return (
-    <UserContext.Provider value={{ user, setUser, loading }}>
+    <UserContext.Provider value={{ user, setUser, loading, logout }}>
       {children}
     </UserContext.Provider>
   );
@@ -51,6 +72,6 @@ export function UserProvider({ children }: { children: ReactNode }) {
 // ✅ Custom hook
 export function useUser() {
   const context = useContext(UserContext);
-  if (!context) throw new Error('useUser must be used within a UserProvider');
+  if (!context) throw new Error("useUser must be used within a UserProvider");
   return context;
 }
