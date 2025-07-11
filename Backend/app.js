@@ -29,13 +29,13 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-app.use(
-    fileUpload({
-        useTempFiles:true,
-		tempFileDir:"/tmp",
-        limits: { fileSize: 50 * 1024 * 1024 }
-	})
-)
+// app.use(
+//     fileUpload({
+//         useTempFiles:true,
+// 		tempFileDir:"/tmp",
+//         limits: { fileSize: 50 * 1024 * 1024 }
+// 	})
+// )
 
 connectMongoDB();
 cloudinaryConnect();
