@@ -8,8 +8,6 @@ module.exports.addToCart = async (req, res) => {
         let user_id = req.user.id;
         console.log("User ID:", user_id);
         let productId = req.params.id;
-        let discount = req.body.discount || 0;
-        console.log("Discount:", discount);
         console.log("Product ID:", productId);
         if (!user_id) {
             return res.status(400).json({
@@ -39,9 +37,7 @@ module.exports.addToCart = async (req, res) => {
             if (!cart) {
             cart = new Cart({
                 user: user_id,
-                items: [{ product: productId 
-                        , discount: discount
-                }]
+                items: [{ product: productId }]
             });
             } else {
                  // Check if product already exists in cart
@@ -52,7 +48,7 @@ module.exports.addToCart = async (req, res) => {
                 if (itemIndex >= 0) {
                     cart.items[itemIndex].quantity += 1;
                 } else {
-                    cart.items.push({ product: productId, quantity: 1, discount: discount });
+                    cart.items.push({ product: productId, quantity: 1 });
                 }
             }
 
@@ -76,8 +72,20 @@ module.exports.addToCart = async (req, res) => {
 module.exports.getCart = async (req, res) => {
     try {
         let user_id = req.params.id;
+        let page = parseInt(req.query.page) || 1;
+        let limit = parseInt(req.query.limit) || 5;
+        let skip = (page - 1) * limit;
+
+        if (!user_id) {
+            return res.status(400).json({
+                success: false,
+                message: "User ID is required"
+            });
+        }
+        
         let cart = await Cart.findOne({ user: user_id }).populate('items.product');
         console.log("Cart:", cart);
+
         if (!cart) {
             return res.status(404).json({
                 success: false,
@@ -87,9 +95,15 @@ module.exports.getCart = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            cart
-
+            currPage: page,
+            totalItems: cart.items.length,
+            totalPages: Math.ceil(cart.items.length / limit),
+            items: cart.items.slice(skip, skip + limit),
+            itemsPerPage: limit,
+            cart:cart,
+            message: "Cart fetched successfully"
         });
+
     } catch (error) {
         console.error("Error fetching cart:", error);
         res.status(500).json({

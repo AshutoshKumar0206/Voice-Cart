@@ -7,6 +7,7 @@ const fileUpload = require('express-fileupload');
 const { cloudinaryConnect } = require('./config/cloudinary');
 const mongoose = require('mongoose');
 const productRoute = require('./routes/productsRoute');
+const orderRoute = require('./routes/orderRoute');
 const indexRoute = require('./routes/indexRoute');
 const userRoute = require('./routes/userRoute');
 const cartRoute = require('./routes/cartRoute');
@@ -44,6 +45,7 @@ app.use('/', indexRoute);
 app.use('/user', userRoute);
 app.use('/cart', cartRoute);
 app.use('/voice', voiceRoute);
+app.use('/order', orderRoute);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
