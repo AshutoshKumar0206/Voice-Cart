@@ -2,6 +2,7 @@ require("dotenv").config();
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const prompt = require("../prompts/geminiPrompt.js");
 const {addToCart, removeFromCart} = require("../controllers/cartController.js");
+const { placeOrder } = require("../controllers/orderController.js");
 const { getProductById } = require("../controllers/productsController.js");
 const Product = require("../model/product.js");
 
@@ -115,6 +116,11 @@ module.exports.interpretCommand = async (req, res) => {
 
             req.params = { id: searchedProduct._id.toString() };
             return await getProductById(req, res);
+          
+        // case "place_order":
+            
+        //     req.user = { id: .id };
+        //     return await placeOrder(req, res);
 
         default:
             return res.status(400).json({

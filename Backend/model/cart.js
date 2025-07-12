@@ -13,11 +13,6 @@ const cartSchema = new mongoose.Schema({
     quantity: {
       type: Number,
       default: 1
-    },
-    discount: {
-      type: Number,
-      min: 5,
-      max: 20
     }
   }]
 

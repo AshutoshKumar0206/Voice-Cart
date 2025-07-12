@@ -23,6 +23,11 @@ const productSchema = new mongoose.Schema({
     type: Number,
     default: 1
   },
+  discount: {
+    type: Number,
+    min: 5,
+    max: 20,
+  }
 }, { timestamps: true });
 
 module.exports = mongoose.model('product', productSchema);
