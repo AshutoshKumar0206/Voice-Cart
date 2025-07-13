@@ -1,21 +1,23 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import gsap from 'gsap';
-import { cn } from '@/lib/utils';
-import { Search, ShoppingCart, User, LogIn } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { useRouter } from 'next/navigation';
-import { useUser } from '@/context/UserContext';
+import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
+import { cn } from "@/lib/utils";
+import { Search, ShoppingCart, User, LogIn } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { useUser } from "@/context/UserContext";
+import { useCart } from "@/context/CartContext";
 
 export default function Navbar() {
   const navbarRef = useRef<HTMLDivElement>(null);
   const [prevScroll, setPrevScroll] = useState(0);
+  const [query, setQuery] = useState("");
   const router = useRouter();
-  const [cartItemCount, setCartItemCount] = useState(2);
-  const { user, loading } = useUser(); 
+  const { user, loading } = useUser();
+  const { cartCount } = useCart();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,22 +35,28 @@ export default function Navbar() {
       setPrevScroll(currentScroll);
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [prevScroll]);
+
+  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && query.trim()) {
+      router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+    }
+  };
 
   return (
     <div
       ref={navbarRef}
       className={cn(
-        'fixed top-0 left-0 z-50 w-full bg-white shadow transition-all duration-300'
+        "fixed top-0 left-0 z-50 w-full bg-white shadow transition-all duration-300"
       )}
     >
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
         {/* Logo */}
         <div
           className="text-xl font-bold cursor-pointer"
-          onClick={() => router.push('/')}
+          onClick={() => router.push("/")}
         >
           VoiceCart
         </div>
@@ -62,6 +70,9 @@ export default function Navbar() {
           <Input
             placeholder="Search for products..."
             className="pl-10 pr-4 rounded-full"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={handleSearch}
           />
         </div>
 
@@ -69,25 +80,19 @@ export default function Navbar() {
         <div className="flex items-center gap-4">
           {!loading && user ? (
             <>
-              {/* Cart */}
               <Button
                 variant="ghost"
                 className="relative"
-                onClick={() => router.push('/cart')}
+                onClick={() => router.push("/cart")}
               >
                 <ShoppingCart size={20} />
-                {cartItemCount > 0 && (
-                  <Badge
-                    className="absolute -top-1 -right-1 px-1.5 text-xs bg-red-600 text-white"
-                    variant="secondary"
-                  >
-                    {cartItemCount}
+                {cartCount > 0 && (
+                  <Badge className="absolute -top-1 -right-1 px-1.5 text-xs bg-red-600 text-white">
+                    {cartCount}
                   </Badge>
                 )}
               </Button>
-
-              {/* Profile */}
-              <Button variant="ghost" onClick={() => router.push('/profile')}>
+              <Button variant="ghost" onClick={() => router.push("/profile")}>
                 <User size={20} />
               </Button>
             </>
@@ -95,7 +100,7 @@ export default function Navbar() {
             !loading && (
               <Button
                 variant="ghost"
-                onClick={() => router.push('/signin')}
+                onClick={() => router.push("/signin")}
                 className="text-blue-600 hover:text-blue-700"
               >
                 <LogIn size={20} className="mr-2" />

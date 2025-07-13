@@ -37,7 +37,7 @@ export default function CartItem({
       <div className="flex gap-4 items-center ">
         {/* 📦 Product Image */}
         <Image
-          src={image}
+          src={image || "/errors/missing-products.png"}
           alt={name}
           width={100}
           height={100}

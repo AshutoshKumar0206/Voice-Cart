@@ -1,15 +1,18 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useUser } from '@/context/UserContext';
-import axiosClient from '@/lib/axios';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import OrderSummaryCard from '@/components/shared/OrderSummaryCard';
-import AddressForm from '@/components/shared/AddressForm';
-import PriceBreakdown from '@/components/shared/PriceBreakdown';
-import { useCallback } from 'react';
+import { useEffect, useState } from "react";
+import { useUser } from "@/context/UserContext";
+import axiosClient from "@/lib/axios";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import OrderSummaryCard from "@/components/shared/OrderSummaryCard";
+import AddressForm from "@/components/shared/AddressForm";
+import PriceBreakdown from "@/components/shared/PriceBreakdown";
+import { useCallback } from "react";
+import { toast } from "sonner";
+import { placeOrder } from "@/lib/order";
+import { useRouter } from "next/navigation";
 
 interface Product {
   _id: string;
@@ -28,14 +31,15 @@ export default function CheckoutPage() {
   const { user, loading: userLoading } = useUser();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const router = useRouter();
   const fetchCart = useCallback(async () => {
     try {
       if (!user) return;
       const res = await axiosClient.get(`/cart/getCart/${user.id}`);
+      console.log(res.data);
       setCartItems(res.data.cart.items);
     } catch (err) {
-      console.error('Failed to fetch cart:', err);
+      console.error("Failed to fetch cart:", err);
     } finally {
       setLoading(false);
     }
@@ -53,6 +57,14 @@ export default function CheckoutPage() {
       </div>
     );
   }
+
+  const handlePlaceOrder = async () => {
+    if (!user) return toast.error("User not found");
+    const success = await placeOrder(user.id);
+    if (success) {
+      router.push("/orders"); // or a success page
+    }
+  };
 
   return (
     <section className="max-w-5xl mx-auto px-4 py-10 space-y-8">
@@ -80,7 +92,9 @@ export default function CheckoutPage() {
       {/* Price Breakdown & Final Button */}
       <PriceBreakdown items={cartItems} />
       <div className="text-right">
-        <Button className="w-full sm:w-auto">Place Order</Button>
+        <Button onClick={handlePlaceOrder} className="w-full sm:w-auto">
+          Place Order
+        </Button>
       </div>
     </section>
   );

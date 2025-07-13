@@ -3,6 +3,8 @@
 import { useRef, useState } from "react";
 import { Mic, MicOff, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import axiosClient from "@/lib/axios";
 
 type SpeechRecognition = typeof window extends { SpeechRecognition: infer T }
   ? T
@@ -28,6 +30,7 @@ export default function VoiceInput() {
   const [transcript, setTranscript] = useState("");
   const [loading, setLoading] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const router = useRouter();
 
   const startRecognition = () => {
     const SpeechRecognition =
@@ -71,13 +74,22 @@ export default function VoiceInput() {
   const sendToBackend = async (text: string) => {
     setLoading(true);
     try {
-      const res = await fetch("/api/voice", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ transcript: text }),
+      const res = await axiosClient.post("/voice/interpret", {
+        command: text,
       });
-      const data = await res.json();
+
+      const data = res.data;
       console.log("Backend response:", data);
+
+      // Clear transcript right after sending
+      setTranscript("");
+
+      if (data.success && data.productData) {
+        const formattedName = encodeURIComponent(
+          data.productData.product_name.toLowerCase().replace(/\s+/g, "-")
+        );
+        router.push(`/search?q=${formattedName}`);
+      }
     } catch (error) {
       console.error("Error sending transcript:", error);
     } finally {
