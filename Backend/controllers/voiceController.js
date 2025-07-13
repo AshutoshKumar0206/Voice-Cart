@@ -117,10 +117,9 @@ module.exports.interpretCommand = async (req, res) => {
             req.params = { id: searchedProduct._id.toString() };
             return await getProductById(req, res);
           
-        // case "place_order":
-            
-        //     req.user = { id: .id };
-        //     return await placeOrder(req, res);
+        case "place_order":
+          
+          return await placeOrder(req, res);
 
         default:
             return res.status(400).json({

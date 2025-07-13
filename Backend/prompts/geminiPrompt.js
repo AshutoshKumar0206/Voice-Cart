@@ -59,7 +59,10 @@ Input: "Checkout"
 Output: { "intent": "place_order" }
 
 Input: "Find Samsung Galaxy"
-Output: { "intent": "search_product", "product": "Samsung Galaxy" }
+Output: { "intent": "search_product", "product": "Samsung" }
+
+Input: "I want to find Dove face wash"  
+Output: { "intent": "search_product", "product": "Dove" }
 
 Now, interpret this:
 "${userInput}"
