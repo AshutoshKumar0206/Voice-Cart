@@ -9,10 +9,16 @@ const Product = require("../model/product.js");
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 const findProductByName = async (name) => {
-  if (!name) return null;
-  const product = await Product.findOne({
-    product_name: { $regex: new RegExp(name, "i") }
-  });
+    if (!name) return null;
+    const words = name.trim().split(/\s+/).map(word => word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+    const pattern = words.join(".*\\s*");
+
+    const regex = new RegExp(pattern, "i");
+
+    const product = await Product.findOne({
+      product_name: { $regex: regex }
+    });
+
   return product;
 };
 
@@ -105,11 +111,13 @@ module.exports.interpretCommand = async (req, res) => {
             if (!parsedText.product) {
                 return handleMissingProductName(res);
             }
+
             let searchedProduct = await findProductByName(parsedText.product.toLowerCase());
             console.log("Product to search:", searchedProduct);
             if (!searchedProduct) {
                 return res.status(404).json({ 
-                    success: false, 
+                    success: false,
+                    product_name: parsedText.product, 
                     message: `Product "${parsedText.product}" not found` 
                 });
             }
@@ -136,3 +144,94 @@ module.exports.interpretCommand = async (req, res) => {
     });
   }
 };
+
+module.exports.getProductsByName = async (req, res) => {
+    try {
+      let transcript = req.body.command;
+      console.log("Received transcript:", transcript);
+
+      if (!transcript) {
+        return res.status(400).json({
+          success: false,
+          message: "Transcript is required",
+        });
+      }
+      
+      let model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+      console.log("Using Gemini model:", model);
+
+      let result = await model.generateContent(prompt(transcript));
+      console.log("Gemini result", result);
+
+      if(!result || !result.response) {
+          console.error("No response from Gemini model");
+          return res.status(500).json({
+              success: false,
+              message: "Invalid Gemini response",
+          });
+      }
+
+      let text = result.response.text();
+      console.log("Gemini response:", text);
+
+      if (!text) {
+        return res.status(500).json({
+          success: false,
+          message: "No response from Gemini model",
+        });
+      }
+      console.log("Gemini response text:", text);
+
+      let jsonStart = text.indexOf("{");
+      console.log("JSON start index:", jsonStart);
+      let json = text.slice(jsonStart);
+      console.log("Extracted JSON string:", json);
+      let parsedText = JSON.parse(json);
+      console.log("Parsed text:", parsedText);
+      if (!parsedText.product) {
+        return res.status(400).json({
+          success: false,
+          message: "Product name is required",
+        });
+      }
+        
+      if(parsedText.fallback_to_search_all){
+          try {
+            let words = parsedText.product.trim().split(/\s+/).map(word => word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+            let pattern = words.join(".*\\s*");
+            let regex = new RegExp(pattern, "i");
+            console.log("Searching for similar products with regex:", regex);
+            let similarProducts = await Product.find({
+              product_name: { $regex: regex }
+            });
+            console.log("Similar products found:", similarProducts);
+            if (!similarProducts || similarProducts.length === 0) {
+              return res.status(404).json({ 
+                success: false, 
+                message: `No similar products found for "${parsedText.product}"` 
+              });
+            }
+
+            return res.status(200).json({
+              success: true,
+              message: `Similar products for "${parsedText.product}"`,
+              products: similarProducts
+            });
+
+        } catch (error) {
+            console.error("Error searching all products:", error);
+            return res.status(500).json({
+              success: false,
+              message: "Failed to search all products",
+            });
+        }
+      }
+
+    } catch (error) {
+        console.error("Error fetching product by name:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Unable to fetch product"
+        });
+    }
+}
