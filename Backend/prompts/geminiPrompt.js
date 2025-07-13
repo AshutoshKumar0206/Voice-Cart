@@ -31,8 +31,14 @@ Output: { "intent": "search_product", "product": "cooking oil" }
 Input: "Can you place my order now?"
 Output: { "intent": "place_order" }
 
-Input: "I want to find Dove face wash"
-Output: { "intent": "search_product", "product": "Dove face wash" }
+Input: "Search for Dove face wash"
+Output: { "intent": "search_product", "product": "Dove face wash", "similar_products": ["Nivea face wash", "Pond's face wash", "Himalaya face wash"] }
+
+Input: "Search for cooking oil"
+Output: { "intent": "search_product", "product": "cooking oil", "similar_products": ["olive oil", "mustard oil", "sunflower oil"] }
+
+Input: "Find 1 kg sugar"
+Output: { "intent": "search_product", "product": "sugar", "similar_products": ["brown sugar", "organic sugar"] }
 
 Input: "Add 1 kg sugar to my cart"
 Output: { "intent": "add_to_cart", "product": "sugar" }
