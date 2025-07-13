@@ -50,8 +50,11 @@ export function UserProvider({ children }: { children: ReactNode }) {
         withCredentials: true,
       });
       setUser(res.data.user);
+      if(pathname === '/verify-email' || pathname === '/signin' || pathname === '/signup'){
+        window.location.href = '/dashboard';
+      }
     } catch {
-      if(pathname !== '/'){
+      if(pathname !== '/' && pathname !== '/verify-email' && pathname !== '/signin' && pathname !== '/signup'){
         await logout(); // 🔐 logout on failure (acts as middleware)
       }
     } finally {

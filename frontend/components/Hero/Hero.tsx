@@ -46,7 +46,7 @@ export default function Hero() {
           src="/home/hero.png"
           alt="Person giving voice command"
           fill
-          className="object-contain mt-24 md:mt-6"
+          className="object-contain mt-24 md:mt-6 opacity-70 lg:opacity-100"
           priority
         />
       </div>
@@ -60,9 +60,11 @@ export default function Hero() {
           <h1 className="text-4xl md:text-5xl font-bold drop-shadow-sm">
             Shop Smarter <br /> <p className="mt-2">with Your Voice</p>
           </h1>
-          <p className="mt-4 text-lg md:text-xl font-medium text-gray-700">
-            Order groceries, electronics, and more — just by speaking.
-          </p>
+         <p className="mt-4 text-lg md:text-xl font-medium text-gray-700">
+          Order groceries, electronics, and more
+          <span className="hidden lg:inline"><br /></span>
+          <b>— just by speaking.</b>
+        </p>
         </div>
 
         {/* BUTTONS BOTTOM RIGHT */}
