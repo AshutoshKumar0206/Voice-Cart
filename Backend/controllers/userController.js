@@ -336,18 +336,22 @@ module.exports.recommendProducts = async (req, res) => {
                     ],
                     fashion: [
                         { $match: { category: "Fashion" } },
-                        { $sample: { size: 3 } }
+                        { $sample: { size: 2 } }
                     ],
                     grocery: [
                         { $match: { category: "Grocery" } },
-                        { $sample: { size: 3 } }
+                        { $sample: { size: 2 } }
+                    ],
+                    books: [
+                        { $match: { category: "Books" } },
+                        { $sample: { size: 2 } }
                     ]
                 }
             },
             {
                 $project: {
                     recommendedProducts: {
-                        $concatArrays: ["$electronics", "$fashion", "$grocery"]
+                        $concatArrays: ["$electronics", "$fashion", "$grocery", "$books"]
                     }
                 }
             }
