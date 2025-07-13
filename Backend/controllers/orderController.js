@@ -82,6 +82,7 @@ module.exports.getOrders = async (req, res) => {
         
         let orders = await Order.find({ user: userId })
                         .populate('items.product', 'product_name price image')
+                        .sort({ createdAt: -1 })
                         .skip(skip)
                         .limit(limit);
 
