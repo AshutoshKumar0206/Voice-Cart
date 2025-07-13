@@ -5,7 +5,7 @@ const Cart = require('../model/cart');
 
 module.exports.placeOrder = async (req, res) => {
     try {
-        let userId = req.params.id;
+        let userId = req.user.id;
         if(!userId){
             return res.status(400).json({ 
                 success: false,
