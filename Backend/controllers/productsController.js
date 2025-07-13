@@ -182,36 +182,3 @@ module.exports.getProductsByCategory = async (req, res) => {
         });
     }
 }
-
-module.exports.recommendProducts = async (req, res) => {
-    try {
-        let userId = req.params.id;
-        if (!userId) {
-            return res.status(400).json({ 
-                success: false, 
-                message: "User ID is required" 
-            });
-        }
-        let userCart = await cart.findOne({ user: userId }).populate('items.product');
-        if (!userCart || userCart.items.length === 0) {
-            return res.status(404).json({ 
-                success: false, 
-                message: "No products in cart to recommend from" 
-            });
-        }
-        
-        let recommendedProducts = await product.aggregate([
-            { $sample: { size: 5 } }
-        ]);
-        
-        res.status(200).json({ 
-            success: true, 
-            recommendedProducts: recommendedProducts 
-        });
-    } catch (error) {
-        res.status(500).json({ 
-            success: false, 
-            message: "Unable to recommend products" 
-        });
-    }
-}

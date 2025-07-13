@@ -18,4 +18,7 @@ router.get("/dashboard/:id",isAuthenticated, userController.dashboard);
 // Get Current User Route
 router.get("/me", isAuthenticated, userController.getMe);
 
+//Get Recommended Products
+router.get("/recommendProducts/:id", isAuthenticated, userController.recommendProducts);
+
 module.exports = router;
