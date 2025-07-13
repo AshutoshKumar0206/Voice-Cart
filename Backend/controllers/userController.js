@@ -10,6 +10,7 @@ const mailSender = require('../utils/mailSender');
 const otpGenerator = require('otp-generator');
 const notConfirmedModel = require('../model/notConfirmed');
 const pendingUserModel = require('../model/pendingUser');
+const Cart = require('../model/cart');
 const mongoose = require('mongoose');
 module.exports.signUp = async (req, res) => {
     try {
@@ -305,4 +306,65 @@ module.exports.getMe = async (req, res) => {
       message: "Failed to retrieve user details",
     });
   }
+};
+
+module.exports.recommendProducts = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        if (!userId) {
+            return res.status(400).json({
+                success: false,
+                message: "User ID is required"
+            });
+        }
+
+        const userCart = await Cart.findOne({ user: userId });
+
+        if (!userCart || userCart.items.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: "No products in cart to recommend from"
+            });
+        }
+
+        const recommended = await Product.aggregate([
+            {
+                $facet: {
+                    electronics: [
+                        { $match: { category: "Electronics" } },
+                        { $sample: { size: 3 } }
+                    ],
+                    fashion: [
+                        { $match: { category: "Fashion" } },
+                        { $sample: { size: 3 } }
+                    ],
+                    grocery: [
+                        { $match: { category: "Grocery" } },
+                        { $sample: { size: 3 } }
+                    ]
+                }
+            },
+            {
+                $project: {
+                    recommendedProducts: {
+                        $concatArrays: ["$electronics", "$fashion", "$grocery"]
+                    }
+                }
+            }
+        ]);
+
+        const finalRecommendations = recommended[0]?.recommendedProducts || [];
+
+        res.status(200).json({
+            success: true,
+            recommendedProducts: finalRecommendations
+        });
+
+    } catch (error) {
+        console.error("Recommendation Error:", error);
+        res.status(500).json({
+            success: false,
+            message: "Unable to recommend products"
+        });
+    }
 };
