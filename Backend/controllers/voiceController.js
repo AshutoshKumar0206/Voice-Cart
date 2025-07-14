@@ -29,18 +29,8 @@ const handleMissingProductName = (res) => {
   });
 };
 
-module.exports.interpretCommand = async (req, res) => {
-    try {
-    let transcript = req.body.command;
-    console.log("Received transcript:", transcript);
-
-    if (!transcript) {
-      return res.status(400).json({
-        success: false,
-        message: "Transcript is required",
-      });
-    }
-    
+const parseGeminiModel = async (transcript) => {
+  try{
     let model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
     console.log("Using Gemini model:", model);
 
@@ -73,6 +63,38 @@ module.exports.interpretCommand = async (req, res) => {
     let parsedText = JSON.parse(json);
     console.log("Parsed text:", parsedText);
 
+    if (!parsedText.product) {
+      return res.status(400).json({
+        success: false,
+        message: "Product name is required",
+      });
+    }
+    
+    return parsedText;
+
+  } catch (error) {
+      console.error("Gemini parse error:", error.message);
+      return res.status(500).json({
+        success: false,
+        message: "Failed to parse the Gemini response",
+      });
+  }
+}
+
+module.exports.interpretCommand = async (req, res) => {
+    try {
+    let transcript = req.body.command;
+    console.log("Received transcript:", transcript);
+
+    if (!transcript) {
+      return res.status(400).json({
+        success: false,
+        message: "Transcript is required",
+      });
+    }
+
+    let parsedText = await parseGeminiModel(transcript);
+    console.log("Hello Parsed text:", parsedText);
     switch (parsedText.intent) {
         case "add_to_cart":
         if (!parsedText.product) {
@@ -157,60 +179,31 @@ module.exports.getProductsByName = async (req, res) => {
         });
       }
       
-      let model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-      console.log("Using Gemini model:", model);
-
-      let result = await model.generateContent(prompt(transcript));
-      console.log("Gemini result", result);
-
-      if(!result || !result.response) {
-          console.error("No response from Gemini model");
-          return res.status(500).json({
-              success: false,
-              message: "Invalid Gemini response",
-          });
-      }
-
-      let text = result.response.text();
-      console.log("Gemini response:", text);
-
-      if (!text) {
-        return res.status(500).json({
-          success: false,
-          message: "No response from Gemini model",
-        });
-      }
-      console.log("Gemini response text:", text);
-
-      let jsonStart = text.indexOf("{");
-      console.log("JSON start index:", jsonStart);
-      let json = text.slice(jsonStart);
-      console.log("Extracted JSON string:", json);
-      let parsedText = JSON.parse(json);
-      console.log("Parsed text:", parsedText);
-      if (!parsedText.product) {
-        return res.status(400).json({
-          success: false,
-          message: "Product name is required",
-        });
-      }
+      let parsedText = await parseGeminiModel(transcript);
         
       if(parsedText.fallback_to_search_all){
           try {
-            let words = parsedText.product.trim().split(/\s+/).map(word => word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-            let pattern = words.join(".*\\s*");
-            let regex = new RegExp(pattern, "i");
-            console.log("Searching for similar products with regex:", regex);
+            let words = parsedText.product.trim().split(/\s+/);
+            let regexFilters = words.map(word => ({
+              product_name: { $regex: word, $options: "i" }
+            }));
+            console.log("Regex filters:", regexFilters);
+
             let similarProducts = await Product.find({
-              product_name: { $regex: regex }
+              $and: regexFilters
             });
-            console.log("Similar products found:", similarProducts);
+            
             if (!similarProducts || similarProducts.length === 0) {
-              return res.status(404).json({ 
-                success: false, 
-                message: `No similar products found for "${parsedText.product}"` 
-              });
+              similarProducts = await Product.find({ $or: regexFilters });
+              if (!similarProducts || similarProducts.length === 0) {
+                return res.status(404).json({
+                  success: false,
+                  message: `No similar products found for "${productText}"`,
+                });
+              }
             }
+
+            console.log("Similar products found:", similarProducts);
 
             return res.status(200).json({
               success: true,
