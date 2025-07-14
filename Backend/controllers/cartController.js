@@ -72,9 +72,6 @@ module.exports.addToCart = async (req, res) => {
 module.exports.getCart = async (req, res) => {
     try {
         let user_id = req.params.id;
-        let page = parseInt(req.query.page) || 1;
-        let limit = parseInt(req.query.limit) || 5;
-        let skip = (page - 1) * limit;
 
         if (!user_id) {
             return res.status(400).json({
@@ -95,11 +92,7 @@ module.exports.getCart = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            currPage: page,
-            totalItems: cart.items.length,
-            totalPages: Math.ceil(cart.items.length / limit),
-            items: cart.items.slice(skip, skip + limit),
-            itemsPerPage: limit,
+            items: cart.items,
             cart:cart,
             message: "Cart fetched successfully"
         });
