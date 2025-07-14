@@ -29,7 +29,7 @@ const handleMissingProductName = (res) => {
   });
 };
 
-const parseGeminiModel = async (transcript) => {
+const parseGeminiModel = async (transcript, req, res) => {
   try{
     let model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
     console.log("Using Gemini model:", model);
