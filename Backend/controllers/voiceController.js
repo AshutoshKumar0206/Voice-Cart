@@ -29,7 +29,7 @@ const handleMissingProductName = (res) => {
   });
 };
 
-const parseGeminiModel = async (transcript, req, res) => {
+const parseGeminiModel = async (transcript) => {
   try{
     let model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
     console.log("Using Gemini model:", model);
@@ -39,7 +39,7 @@ const parseGeminiModel = async (transcript, req, res) => {
 
     if(!result || !result.response) {
         console.error("No response from Gemini model");
-        return res.status(500).json({
+        return ({
             success: false,
             message: "Invalid Gemini response",
         });
@@ -49,7 +49,7 @@ const parseGeminiModel = async (transcript, req, res) => {
     console.log("Gemini response:", text);
 
     if (!text) {
-      return res.status(500).json({
+      return ({
         success: false,
         message: "No response from Gemini model",
       });
@@ -64,7 +64,7 @@ const parseGeminiModel = async (transcript, req, res) => {
     console.log("Parsed text:", parsedText);
 
     if (!parsedText.product) {
-      return res.status(400).json({
+      return ({
         success: false,
         message: "Product name is required",
       });
@@ -74,7 +74,7 @@ const parseGeminiModel = async (transcript, req, res) => {
 
   } catch (error) {
       console.error("Gemini parse error:", error.message);
-      return res.status(500).json({
+      return ({
         success: false,
         message: "Failed to parse the Gemini response",
       });
