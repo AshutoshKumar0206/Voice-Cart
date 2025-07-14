@@ -62,13 +62,6 @@ const parseGeminiModel = async (transcript) => {
     console.log("Extracted JSON string:", json);
     let parsedText = JSON.parse(json);
     console.log("Parsed text:", parsedText);
-
-    if (!parsedText.product) {
-      return ({
-        success: false,
-        message: "Product name is required",
-      });
-    }
     
     return parsedText;
 
