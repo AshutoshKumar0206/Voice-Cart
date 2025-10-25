@@ -115,7 +115,7 @@ export default function TopDealsSlider() {
 
         <div className="relative">
           {/* Scroll Buttons */}
-          <button
+          {/* <button
             onClick={() => scroll("left")}
             className="absolute left-[-50px] top-1/2 -translate-y-1/2 z-10 bg-white/80 backdrop-blur rounded-full p-2 shadow hover:bg-white"
           >
@@ -126,13 +126,13 @@ export default function TopDealsSlider() {
             className="absolute right-[-50px] top-1/2 -translate-y-1/2 z-10 bg-white/80 backdrop-blur rounded-full p-2 shadow hover:bg-white"
           >
             <ChevronRight size={24} />
-          </button>
+          </button> */}
 
           {/* Deals Row */}
           <div
             onMouseEnter={pause}
             onMouseLeave={resume}
-            className="overflow-hidden"
+            className="overflow-hidden rounded-2xl shadow-2xl"
           >
             <div ref={containerRef} className="flex gap-6 w-fit">
               {topDeals.map((deal, index) => (

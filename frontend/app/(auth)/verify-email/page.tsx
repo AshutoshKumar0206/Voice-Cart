@@ -41,7 +41,7 @@ export default function EmailVerificationPage() {
   }, []);
 
   return (
-    <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 via-white to-blue-100 px-4 py-12">
+    <section className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-indigo-100 via-white to-blue-100 px-4 py-12">
       <Card className="w-full max-w-md border border-gray-200 shadow-2xl rounded-2xl">
         <CardHeader>
           <CardTitle className="text-2xl font-semibold text-center text-gray-800">

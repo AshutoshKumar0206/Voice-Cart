@@ -5,8 +5,11 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useUser } from "@/context/UserContext";
 
 export default function Hero() {
+  const { user } = useUser();
+
   useGSAP(() => {
     const tl = gsap.timeline();
 
@@ -57,36 +60,53 @@ export default function Hero() {
           id="hero-text"
           className="text-center md:text-left max-w-3xl mt-10"
         >
-          <h1 className="text-4xl md:text-5xl font-bold drop-shadow-sm">
-            Shop Smarter <br /> <p className="mt-2">with Your Voice</p>
+          <h1 className="text-4xl md:text-5xl font-bold drop-shadow-sm leading-snug md:leading-tight">
+            Shop Smarter <br />
+            <span className="mt-2 block">with Your Voice</span>
           </h1>
-         <p className="mt-4 text-lg md:text-xl font-medium text-gray-700">
-          Order groceries, electronics, and more
-          <span className="hidden lg:inline"><br /></span>
-          <b>— just by speaking.</b>
-        </p>
+
+          <p className="mt-6 text-lg md:text-xl font-medium text-gray-700 leading-relaxed">
+            Order groceries, electronics, and more
+            <span className="hidden lg:inline">
+              <br />
+            </span>
+            <b>— just by speaking.</b>
+          </p>
         </div>
 
         {/* BUTTONS BOTTOM RIGHT */}
-        <div id="hero-buttons" className="self-end flex gap-4">
-          <Link href="/signup">
-            <Button
-              size="lg"
-              variant="default"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 text-lg rounded-lg shadow-md"
-            >
-              Sign Up
-            </Button>
-          </Link>
-          <Link href="/signin">
-            <Button
-              size="lg"
-              variant="outline"
-              className="bg-white border border-blue-600 text-blue-700 px-6 py-3 text-lg rounded-lg shadow-md hover:bg-blue-50"
-            >
-              Sign In
-            </Button>
-          </Link>
+        <div id="hero-buttons" className="self-end">
+          {user ? (
+            <div>
+              <Button
+                className="bg-[#2D4B73] text-lg hover:bg-[#011F26]"
+                size="lg"
+              >
+                Get Started
+              </Button>
+            </div>
+          ) : (
+            <div className="flex gap-4">
+              <Link href="/signup">
+                <Button
+                  size="lg"
+                  variant="default"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 text-lg rounded-lg shadow-md"
+                >
+                  Sign Up
+                </Button>
+              </Link>
+              <Link href="/signin">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="bg-white border border-blue-600 text-blue-700 px-6 py-3 text-lg rounded-lg shadow-md hover:bg-blue-50"
+                >
+                  Sign In
+                </Button>
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </section>

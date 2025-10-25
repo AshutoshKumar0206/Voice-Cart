@@ -52,10 +52,13 @@ export default function VoiceInput() {
       setTranscript("");
     };
 
-    recognition.onresult = (event: SpeechRecognitionEvent) => {
-      const text = event.results[0][0].transcript;
-      setTranscript(text);
-      sendToBackend(text);
+    recognition.onresult = (event: any) => {
+      // Guard access to results to avoid TypeScript constructor/instance mismatch
+      const text = event?.results?.[0]?.[0]?.transcript ?? "";
+      if (text) {
+        setTranscript(text);
+        sendToBackend(text);
+      }
     };
 
     recognition.onerror = (event: any) => {

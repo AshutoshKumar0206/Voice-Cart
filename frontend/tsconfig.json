@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "baseUrl": ".",
     "paths": {
       "@/*": [
         "./*"
@@ -18,17 +17,17 @@
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
+    "module": "node16",
     "isolatedModules": true,
-    "jsx": "preserve", // 👈 or use "react-jsx" if using React 17+
+    "jsx": "preserve",
     "incremental": true,
     "plugins": [
       {
         "name": "next"
       }
-    ]
+    ],
+    "moduleResolution": "node16",
+    "resolveJsonModule": true
   },
   "include": [
     "**/*.ts",

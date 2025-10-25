@@ -26,16 +26,9 @@ interface Product {
 }
 
 export default function DashboardPage() {
-  const { user, loading } = useUser();
-  const router = useRouter();
+  const { loading } = useUser();
   const [exploreProducts, setExploreProducts] = useState<Product[]>([]);
   const [productLoading, setProductLoading] = useState(true);
-
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push("/signin");
-    }
-  }, [loading, user, router]);
 
   useEffect(() => {
     const fetchExplore = async () => {
