@@ -55,7 +55,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
         {/* Logo */}
         <div
-          className="text-xl font-bold cursor-pointer"
+          className="text-2xl font-bold cursor-pointer"
           onClick={() => router.push("/")}
         >
           VoiceCart
@@ -85,7 +85,7 @@ export default function Navbar() {
                 className="relative"
                 onClick={() => router.push("/cart")}
               >
-                <ShoppingCart size={20} />
+                <ShoppingCart className="size-6 lg:size-7" />
                 {cartCount > 0 && (
                   <Badge className="absolute -top-1 -right-1 px-1.5 text-xs bg-red-600 text-white">
                     {cartCount}
@@ -93,7 +93,7 @@ export default function Navbar() {
                 )}
               </Button>
               <Button variant="ghost" onClick={() => router.push("/profile")}>
-                <User size={20} />
+                <User className="size-6 lg:size-7"/>
               </Button>
             </>
           ) : (
