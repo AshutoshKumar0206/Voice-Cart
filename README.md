@@ -24,7 +24,7 @@ A minimal e-commerce prototype built for a Sparkathon challenge. It consists of 
 **Project**
 
 This repo contains a two-part application:
-- Frontend: Next.js 14+ app (React + server components) in `./frontend`.
+- Frontend: Next.js 15+ app (React + server components) in `./frontend`.
 - Backend: Express.js API in `./Backend` exposing product, user, cart, order and voice endpoints.
 
 **Tech Stack**
@@ -36,8 +36,9 @@ This repo contains a two-part application:
 - ![Redis](https://img.shields.io/badge/Redis-DC382D?logo=redis&style=flat-square) **Redis**: Caching / session store
 - ![Cloudinary](https://img.shields.io/badge/Cloudinary-3A86FF?style=flat-square) **Cloudinary**: Image hosting/transformations
 - ![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&style=flat-square) **Docker / Compose**: Containerization & local orchestration
-- ![Vercel](https://img.shields.io/badge/Vercel-000000?logo=vercel&style=flat-square) **(Optional) Vercel**: Frontend hosting
+- ![Vercel](https://img.shields.io/badge/Vercel-000000?logo=vercel&style=flat-square) **Vercel**: Frontend hosting
 - ![Queue](https://img.shields.io/badge/Queue-BullMQ-orange?style=flat-square) **Background Workers**: email and async processing
+- ![Queue](https://img.shields.io/badge/Queue-Azure%20WebJobs-blue?style=flat-square) **Background Workers**: email and async processing
 
 **Backend API Endpoints**
 
