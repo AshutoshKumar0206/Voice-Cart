@@ -7,11 +7,15 @@ import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
 import { useState, useRef, useEffect } from "react";
 import clsx from "clsx";
+import { useSearchParams } from "next/navigation";
+import axiosClient from "@/lib/axios";
 
 export default function EmailVerificationPage() {
   const { handleSubmit, setValue } = useForm();
   const [otp, setOtp] = useState<string[]>(Array(6).fill(""));
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email");
 
   const handleChange = (index: number, value: string) => {
     if (!/^\d?$/.test(value)) return;
@@ -31,14 +35,17 @@ export default function EmailVerificationPage() {
     }
   };
 
-  const onSubmit = () => {
-    alert(`Submitted OTP: ${otp.join("")}`);
-    // handle verify request here
+  const onSubmit = async () => {
+    await axiosClient.post("/user/verify-otp", {otp, email})
   };
 
   useEffect(() => {
     inputsRef.current[0]?.focus();
   }, []);
+
+  const resendOTP = async () => {
+    await axiosClient.post("/user/resend-otp", {email});
+  }
 
   return (
     <section className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-indigo-100 via-white to-blue-100 px-4 py-12">
@@ -91,7 +98,9 @@ export default function EmailVerificationPage() {
             <button
               type="button"
               className="text-blue-600 font-medium hover:underline"
-              onClick={() => alert("Resend OTP logic goes here")}
+              onClick={() => {
+                resendOTP();
+              }}
             >
               Resend
             </button>

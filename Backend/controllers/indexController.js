@@ -1,5 +1,5 @@
-module.exports.index = async (req, res, next) => {
-    res.json({
-        message: "Hello world"
-    });
-}
+export const index = async (req, res, next) => {
+  res.json({
+    message: "Hello world"
+  });
+};

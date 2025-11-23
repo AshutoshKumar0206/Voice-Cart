@@ -1,9 +1,10 @@
-const express = require('express');
+import express from "express";
+import { placeOrder, getOrders } from "../controllers/orderController.js";
+import { isAuthenticated } from "../middleware/auth.middleware.js";
+
 const router = express.Router();
-const orderController = require('../controllers/orderController');
-const { isAuthenticated } = require("../middleware/auth.middleware");
 
-router.post('/placeOrder/:id', isAuthenticated, orderController.placeOrder);
-router.get('/getOrders/:id', isAuthenticated, orderController.getOrders);
+router.post("/placeOrder/:id", isAuthenticated, placeOrder);
+router.get("/getOrders/:id", isAuthenticated, getOrders);
 
-module.exports = router;
+export default router;

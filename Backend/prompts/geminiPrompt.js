@@ -75,4 +75,4 @@ Now, interpret this:
 `;
 }
 
-module.exports = prompt;
+export default prompt;

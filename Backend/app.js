@@ -1,23 +1,24 @@
-const express = require('express');
-const app = express();
-const cors = require('cors');
-const cookieParser = require('cookie-parser');
-const connectMongoDB = require('./config/mongodb');
-const fileUpload = require('express-fileupload');
-const { cloudinaryConnect } = require('./config/cloudinary');
-const mongoose = require('mongoose');
-const productRoute = require('./routes/productsRoute');
-const orderRoute = require('./routes/orderRoute');
-const indexRoute = require('./routes/indexRoute');
-const userRoute = require('./routes/userRoute');
-const cartRoute = require('./routes/cartRoute');
-const voiceRoute = require('./routes/voiceRoute');
-const dotenv = require('dotenv');
-const path = require('path');
+import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import connectMongoDB from "./config/mongodb.js";
+import { cloudinaryConnect } from "./config/cloudinary.js";
+import productRoute from "./routes/productsRoute.js";
+import orderRoute from "./routes/orderRoute.js";
+import indexRoute from "./routes/indexRoute.js";
+import userRoute from "./routes/userRoute.js";
+import cartRoute from "./routes/cartRoute.js";
+import voiceRoute from "./routes/voiceRoute.js";
+import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
+import "./utils/queue.js"; // Initialize queue
 
 dotenv.config();
 
 const allowedOrigins = ['https://walmart-sparkathon-eight.vercel.app', 'http://localhost:3000'];
+
+const app = express();
 
 app.use(cookieParser())
 app.use(express.json());
@@ -28,15 +29,12 @@ const corsOptions = {
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 };
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename)
+
 app.use(cors(corsOptions));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-// app.use(
-//     fileUpload({
-//         useTempFiles:true,
-// 		tempFileDir:"/tmp",
-//         limits: { fileSize: 50 * 1024 * 1024 }
-// 	})
-// )
 
 connectMongoDB();
 cloudinaryConnect();

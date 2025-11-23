@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: backend_api
+    env_file:
+      - .env
+    ports:
+      - "3001:3000"
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: backend_worker
+    env_file:
+      - .env
+    depends_on:
+      - api
+    command: ["node", "workers/emailWorker.js"]
+    restart: unless-stopped
