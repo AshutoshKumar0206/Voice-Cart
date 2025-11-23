@@ -1,24 +1,34 @@
-const express = require("express");
-const router = express.Router();
-const userController = require("../controllers/userController");
-const { isAuthenticated } = require("../middleware/auth.middleware");
+import express from "express";
+import {
+  signUp,
+  signIn,
+  logout,
+  verifyotp,
+  dashboard,
+  getMe,
+  recommendProducts,
+  resendOtp
+} from "../controllers/userController.js";
+import { isAuthenticated } from "../middleware/auth.middleware.js";
 
-//User Authentication Routes
-router.post("/signup", userController.signUp);
-router.post("/signin", userController.signIn);
-router.post("/logout", isAuthenticated, userController.logout);
+const router = express.Router();
+
+// User Authentication Routes
+router.post("/signup", signUp);
+router.post("/signin", signIn);
+router.post("/logout", isAuthenticated, logout);
 
 // OTP Routes
-router.post("/sendotp", userController.sendotp);
-router.post("/verifyotp", userController.verifyotp);
+router.post("/verify-otp", verifyotp);
+router.post('/resend-otp', resendOtp);
 
 // User Dashboard Route
-router.get("/dashboard/:id",isAuthenticated, userController.dashboard);
+router.get("/dashboard/:id", isAuthenticated, dashboard);
 
 // Get Current User Route
-router.get("/me", isAuthenticated, userController.getMe);
+router.get("/me", isAuthenticated, getMe);
 
-//Get Recommended Products
-router.get("/recommendProducts/:id", isAuthenticated, userController.recommendProducts);
+// Get Recommended Products
+router.get("/recommendProducts/:id", isAuthenticated, recommendProducts);
 
-module.exports = router;
+export default router;

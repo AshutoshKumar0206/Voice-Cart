@@ -1,6 +1,6 @@
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
 
 // Ensure upload folders exist
 const ensureDirExists = (dir) => {
@@ -31,4 +31,4 @@ const createMulterInstance = (folder) => {
   return multer({ storage });
 };
 
-module.exports = createMulterInstance;
+export default createMulterInstance;

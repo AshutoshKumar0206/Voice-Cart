@@ -1,22 +1,20 @@
-const mongoose = require("mongoose");
-require('dotenv').config();
-const connectMongoDB =  (req, res) => {
-  try {
-        mongoose.connect(process.env.MONGO_URL, {
-        }).then(() => {
-          console.log("connected to mongodb");
-        }).catch((err) => {
-            res.status(500).json({
-              success:false,
-              message:"Error in connecting to MongoDB"
-        })
-        })
-    } catch (err) {
-      res.status(500).json({
-        success:false,
-        message:"Error in Processing connection request"
-	})
-  }
-}
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+dotenv.config();
 
-module.exports = connectMongoDB;
+const connectMongoDB = () => {
+  try {
+    mongoose
+      .connect(process.env.MONGO_URL)
+      .then(() => {
+        console.log("Connected to MongoDB");
+      })
+      .catch((err) => {
+        console.error("MongoDB Connection Error:", err.message);
+      });
+  } catch (err) {
+    console.error("Error in Processing connection request", err.message);
+  }
+};
+
+export default connectMongoDB;

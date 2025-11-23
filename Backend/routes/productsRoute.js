@@ -1,15 +1,28 @@
-const express = require('express');
+import express from "express";
+import createMulterInstance from "../utils/multer.js";
+import {
+  getAllProducts,
+  createProduct,
+  getProductById,
+  getProductsByTopDeals,
+  exploreProducts,
+  getProductsByCategory,
+} from "../controllers/productsController.js";
+
 const router = express.Router();
-const createMulterInstance = require('../utils/multer');
-const productsController = require('../controllers/productsController');
 
-const productUploader = createMulterInstance('uploads/products');
+const productUploader = createMulterInstance("uploads/products");
 
-router.post('/createProduct', productUploader.single('image'), productsController.createProduct);
-router.get('/getAllProducts', productsController.getAllProducts);
-router.get('/getProductById/:id', productsController.getProductById);
-router.get('/getTopDeals', productsController.getProductsByTopDeals);
-router.get("/exploreProducts", productsController.exploreProducts);
-router.get('/getProductsByCategory/:category', productsController.getProductsByCategory);
+router.post("/createProduct", productUploader.single("image"), createProduct);
 
-module.exports = router;
+router.get("/getAllProducts", getAllProducts);
+
+router.get("/getProductById/:id", getProductById);
+
+router.get("/getTopDeals", getProductsByTopDeals);
+
+router.get("/exploreProducts", exploreProducts);
+
+router.get("/getProductsByCategory/:category", getProductsByCategory);
+
+export default router;

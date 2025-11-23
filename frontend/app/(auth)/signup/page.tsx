@@ -20,28 +20,40 @@ import {
 import Link from "next/link";
 import { toast } from "sonner";
 
-// ✅ Zod schema
-const formSchema = z
-  .object({
-    name: z.string().min(2, "Name is too short"),
-    email: z.string().email("Invalid email"),
-    phone: z.string().min(10, "Enter a valid phone number"),
-    password: z.string().min(8, "Password must be at least 8 characters"),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
+// Zod schema (no confirm password)
+const formSchema = z.object({
+  name: z.string().min(2, "Name is too short"),
+  email: z.string().email("Invalid email"),
+  phone: z.string().min(10, "Enter a valid phone number"),
+  password: z
+    .string()
+    .min(8, "Must be at least 8 characters")
+    .regex(/[A-Z]/, "Must include at least one uppercase letter")
+    .regex(/[a-z]/, "Must include at least one lowercase letter")
+    .regex(/[0-9]/, "Must include at least one digit")
+    .regex(/[^A-Za-z0-9]/, "Must include one special character"),
+});
+
+// Score password strength
+const getPasswordScore = (pwd: string) => {
+  let score = 0;
+
+  if (pwd.length >= 8) score++;
+  if (/[A-Z]/.test(pwd)) score++;
+  if (/[a-z]/.test(pwd)) score++;
+  if (/[0-9]/.test(pwd)) score++;
+  if (/[^A-Za-z0-9]/.test(pwd)) score++;
+
+  return score; // score from 0 to 5
+};
 
 type SignUpFormValues = z.infer<typeof formSchema>;
 
 export default function SignUpPage() {
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
-
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [password, setPassword] = useState("");
 
   const form = useForm<SignUpFormValues>({
     resolver: zodResolver(formSchema),
@@ -50,26 +62,48 @@ export default function SignUpPage() {
       email: "",
       phone: "",
       password: "",
-      confirmPassword: "",
     },
   });
+
+  const strengthScore = getPasswordScore(password);
+
+  const strengthText =
+    strengthScore <= 2
+      ? "Weak"
+      : strengthScore === 3 || strengthScore === 4
+      ? "Medium"
+      : "Strong";
+
+  const strengthColor =
+    strengthScore <= 2
+      ? "bg-red-500"
+      : strengthScore === 3 || strengthScore === 4
+      ? "bg-yellow-500"
+      : "bg-green-600";
+
+  const strengthWidth = {
+    0: "w-[0%]",
+    1: "w-[20%]",
+    2: "w-[40%]",
+    3: "w-[60%]",
+    4: "w-[80%]",
+    5: "w-[100%]",
+  }[strengthScore];
 
   const onSubmit = async (data: SignUpFormValues) => {
     try {
       setServerError(null);
+
       const res = await axiosClient.post("/user/signup", data);
 
-      if(res.status === 201){
-        toast.success("Account created successfully! Please sign in.");
-        router.push("/verify-email"); // or /signin if no verification yet
-      }
-      else{
+      if (res.status === 201) {
+        toast.success("Account created successfully! Please verify your email.");
+        router.push(`/verify-email?email=${data.email}`);
+      } else {
         toast.error("Signup failed. Try again.");
       }
     } catch (err: any) {
-      setServerError(
-        err?.response?.data?.message || "Signup failed. Try again."
-      );
+      setServerError(err?.response?.data?.message || "Signup failed. Try again.");
       toast.error("Signup failed. Try again.");
     }
   };
@@ -82,9 +116,12 @@ export default function SignUpPage() {
             Create an Account
           </CardTitle>
         </CardHeader>
+
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+
+              {/* Name */}
               <FormField
                 control={form.control}
                 name="name"
@@ -98,6 +135,8 @@ export default function SignUpPage() {
                   </FormItem>
                 )}
               />
+
+              {/* Email */}
               <FormField
                 control={form.control}
                 name="email"
@@ -105,16 +144,14 @@ export default function SignUpPage() {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input
-                        type="email"
-                        placeholder="you@example.com"
-                        {...field}
-                      />
+                      <Input type="email" placeholder="you@example.com" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
+              {/* Phone */}
               <FormField
                 control={form.control}
                 name="phone"
@@ -128,21 +165,30 @@ export default function SignUpPage() {
                   </FormItem>
                 )}
               />
+
+              {/* Password + Strength Meter */}
               <FormField
                 control={form.control}
                 name="password"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Password</FormLabel>
+
                     <div className="relative">
                       <FormControl>
                         <Input
                           type={showPassword ? "text" : "password"}
                           placeholder="••••••••"
                           {...field}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            setPassword(e.target.value);
+                          }}
                           className="pr-10"
                         />
                       </FormControl>
+
+                      {/* Toggle Show */}
                       <button
                         type="button"
                         className="absolute inset-y-0 right-2 flex items-center text-sm text-gray-500"
@@ -151,58 +197,51 @@ export default function SignUpPage() {
                         {showPassword ? "Hide" : "Show"}
                       </button>
                     </div>
+
+                    {/* Strength Meter */}
+                    {password.length > 0 && (
+                      <div className="mt-2">
+                        <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                          <div
+                            className={`h-full ${strengthColor} transition-all duration-300 ${strengthWidth}`}
+                          />
+                        </div>
+                        <p className="text-xs mt-1 text-gray-700 font-medium">
+                          Strength:{" "}
+                          <span
+                            className={
+                              strengthScore <= 2
+                                ? "text-red-600"
+                                : strengthScore <= 4
+                                ? "text-yellow-600"
+                                : "text-green-600"
+                            }
+                          >
+                            {strengthText}
+                          </span>
+                        </p>
+                      </div>
+                    )}
+
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="confirmPassword"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Confirm Password</FormLabel>
-                    <div className="relative">
-                      <FormControl>
-                        <Input
-                          type={showConfirmPassword ? "text" : "password"}
-                          placeholder="••••••••"
-                          {...field}
-                          className="pr-10"
-                        />
-                      </FormControl>
-                      <button
-                        type="button"
-                        className="absolute inset-y-0 right-2 flex items-center text-sm text-gray-500"
-                        onClick={() => setShowConfirmPassword((prev) => !prev)}
-                      >
-                        {showConfirmPassword ? "Hide" : "Show"}
-                      </button>
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {/* Server error */}
+              {serverError && <p className="text-sm text-red-600">{serverError}</p>}
 
-              {serverError && (
-                <p className="text-sm text-red-600">{serverError}</p>
-              )}
-
-              <Button
-                type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-              >
+              {/* Submit */}
+              <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white">
                 Sign Up
               </Button>
             </form>
           </Form>
 
+          {/* Footer */}
           <p className="mt-6 text-sm text-center text-gray-600">
             Already have an account?{" "}
-            <Link
-              href="/signin"
-              className="text-blue-600 font-medium hover:underline"
-            >
+            <Link href="/signin" className="text-blue-600 font-medium hover:underline">
               Sign In
             </Link>
           </p>

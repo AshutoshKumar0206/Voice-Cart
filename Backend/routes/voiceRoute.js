@@ -1,9 +1,13 @@
-const express = require("express");
+import express from "express";
+import {
+  interpretCommand,
+  getProductsByName,
+} from "../controllers/voiceController.js";
+import { isAuthenticated } from "../middleware/auth.middleware.js";
+
 const router = express.Router();
-const voiceController = require("../controllers/voiceController");
-const { isAuthenticated } = require("../middleware/auth.middleware");
 
-router.post("/interpret", isAuthenticated, voiceController.interpretCommand);
-router.post("/getProductByName", isAuthenticated, voiceController.getProductsByName);
+router.post("/interpret", isAuthenticated, interpretCommand);
+router.post("/getProductByName", isAuthenticated, getProductsByName);
 
-module.exports = router;
+export default router;
