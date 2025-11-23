@@ -1,9 +1,9 @@
-# Walmart-Sparkathon
+# Voice Cart
 
 ![Build](https://img.shields.io/badge/build-setup-important?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
 
-A minimal e-commerce prototype built for a Sparkathon challenge. It consists of a Next.js frontend and an Express.js backend with MongoDB, Redis caching, and background workers for email tasks and queues. The project demonstrates a full-stack shopping flow: product browsing, cart management, user authentication (OTP), voice commands, and order placement.
+Voice Cart is an intelligent, voice-driven shopping system designed to make online purchasing faster, more natural, and more accessible. It consists of a Next.js frontend and an Express.js backend with MongoDB, Redis caching, and background workers for email tasks and queues. The project demonstrates a full-stack shopping flow: product browsing, cart management, user authentication (OTP), voice commands, and order placement.
 
 **Quick links:**
 - **Backend:** `./Backend`
