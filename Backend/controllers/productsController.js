@@ -6,6 +6,8 @@ import { uploadImageToCloudinary } from "../utils/imageUploader.js";
 ============================ */
 export const createProduct = async (req, res) => {
   try {
+    console.log("body", req.body)
+    console.log("image", req.file)
     const {
       product_name,
       price,
@@ -17,7 +19,7 @@ export const createProduct = async (req, res) => {
       discount,
       tags,
       metadata,
-    } = req.body;
+    } = req.body; 
 
     /* ---------- VALIDATION ---------- */
     if (!product_name || !price || !description || !quantity || !category) {

@@ -15,7 +15,7 @@ const ensureDirExists = (dir) => {
  */
 const createMulterInstance = (folder) => {
   ensureDirExists(folder);
-
+  
   const storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, folder);

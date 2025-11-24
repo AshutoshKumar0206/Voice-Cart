@@ -20,14 +20,14 @@ const allowedOrigins = ['https://voicecartapp.vercel.app', 'http://localhost:300
 
 const app = express();
 
-app.use(cookieParser())
-app.use(express.json());
+app.use(cookieParser());
 
 const corsOptions = {
     origin: allowedOrigins,
     credentials: true, // if you're using cookies or authorization headers
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    // allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: '*'
 };
 
 const __filename = fileURLToPath(import.meta.url);
@@ -38,6 +38,9 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 connectMongoDB();
 cloudinaryConnect();
+
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use('/products', productRoute);
 app.use('/', indexRoute);
 app.use('/user', userRoute);
