@@ -9,7 +9,7 @@ Voice Cart is an intelligent, voice-driven shopping system designed to make onli
 - **Backend:** `./Backend`
 - **Frontend:** `./frontend`
 
-**Live demo:** (if deployed) Add link here
+**Live demo:** https://voicecartapp.vercel.app/
 
 **Maintainers:** AshutoshKumar0206 and Aditya1016
 
