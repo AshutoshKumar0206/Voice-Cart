@@ -11,7 +11,7 @@ Voice Cart is an intelligent, voice-driven shopping system designed to make onli
 
 **Live demo:** (if deployed) Add link here
 
-**Maintainers:** AshutoshKumar0206 and contributors
+**Maintainers:** AshutoshKumar0206 and Aditya1016
 
 **Table of contents**
 - **Project**: summary and goals
