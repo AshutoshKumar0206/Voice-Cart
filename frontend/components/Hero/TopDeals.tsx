@@ -24,7 +24,7 @@ export default function TopDealsSlider() {
   const tweenRef = useRef<gsap.core.Tween | null>(null);
   const [topDeals, setTopDeals] = useState<Deal[]>([]);
   const CARD_WIDTH = 336;
-  const {refreshCart} = useCart();
+  const { refreshCart } = useCart();
   useEffect(() => {
     const fetchDeals = async () => {
       try {
@@ -96,17 +96,9 @@ export default function TopDealsSlider() {
   };
 
   return (
-    <section className="relative h-full w-full overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 -z-10">
-        <Image
-          src="/bg/two.jpg"
-          alt="Deals Background"
-          fill
-          className="object-cover opacity-40 blur-sm"
-          priority
-        />
-      </div>
+    <section className="relative h-full w-full overflow-hidden bg-gray-50">
+      {/* Grid overlay */}
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(transparent_97%,rgba(0,0,0,0.03)_98%),linear-gradient(90deg,transparent_97%,rgba(0,0,0,0.03)_98%)] bg-[length:40px_40px]" />
 
       <div className="max-w-7xl mx-auto px-4 py-16 h-full flex flex-col justify-center gap-8">
         <h2 className="text-4xl font-bold text-center text-gray-800 mb-10">
@@ -114,20 +106,6 @@ export default function TopDealsSlider() {
         </h2>
 
         <div className="relative">
-          {/* Scroll Buttons */}
-          {/* <button
-            onClick={() => scroll("left")}
-            className="absolute left-[-50px] top-1/2 -translate-y-1/2 z-10 bg-white/80 backdrop-blur rounded-full p-2 shadow hover:bg-white"
-          >
-            <ChevronLeft size={24} />
-          </button>
-          <button
-            onClick={() => scroll("right")}
-            className="absolute right-[-50px] top-1/2 -translate-y-1/2 z-10 bg-white/80 backdrop-blur rounded-full p-2 shadow hover:bg-white"
-          >
-            <ChevronRight size={24} />
-          </button> */}
-
           {/* Deals Row */}
           <div
             onMouseEnter={pause}

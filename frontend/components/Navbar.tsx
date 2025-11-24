@@ -56,7 +56,10 @@ export default function Navbar() {
         {/* Logo */}
         <div
           className="text-2xl font-bold cursor-pointer"
-          onClick={() => router.push("/")}
+          onClick={() => {
+            if(user) router.push('/dashboard');
+            else router.push("/")
+          }}
         >
           VoiceCart
         </div>

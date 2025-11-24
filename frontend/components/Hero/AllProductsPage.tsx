@@ -26,7 +26,7 @@ export default function AllProductsPage() {
   const gridRef = useRef<HTMLDivElement>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const {refreshCart} = useCart()
+  const { refreshCart } = useCart();
 
   useEffect(() => {
     const fetchExploreProducts = async () => {
@@ -68,18 +68,15 @@ export default function AllProductsPage() {
   }, [products]);
 
   return (
-    <section className="relative h-full w-full overflow-hidden">
-      {/* Background image overlay */}
-      <div className="absolute inset-0 -z-10">
-        <Image
-          src="/bg/one.jpg"
-          alt="Gradient Background"
-          fill
-          className="object-cover opacity-40 blur-sm"
-          priority
-        />
-      </div>
+    <section className="relative h-full w-full overflow-hidden bg-gray-50">
+      {/* subtle grid */}
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(transparent_97%,rgba(0,0,0,0.03)_98%),linear-gradient(90deg,transparent_97%,rgba(0,0,0,0.03)_98%)] bg-[length:38px_38px]" />
 
+      {/* soft glow */}
+      <div className="absolute inset-0 -z-20 bg-[radial-gradient(600px_400px_at_50%_0%,rgba(255,255,255,0.7),transparent)]" />
+
+      <div className="max-w-7xl mx-auto px-4 py-10"></div>
+      
       {/* Main content container */}
       <div className="max-w-7xl mx-auto px-4 py-10">
         <h1 className="text-4xl font-bold mb-10 text-center text-gray-800">
