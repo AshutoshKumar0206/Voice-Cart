@@ -116,19 +116,17 @@ export const interpretCommand = async (req, res) => {
       case "search_product": {
         if (!parsedText.product) return handleMissingProductName(res);
 
-        let searchedProduct = await findProductByName(
-          parsedText.product.toLowerCase()
-        );
-        if (!searchedProduct) {
+        const products = await searchProductsInDB(parsedText.product);
+
+        if (!products.length) {
           return res.status(404).json({
             success: false,
             product_name: parsedText.product,
-            message: `Product "${parsedText.product}" not found`,
+            message: `No products found for "${parsedText.product}"`,
           });
         }
 
-        req.params = { id: searchedProduct._id.toString() };
-        return await getProductById(req, res);
+        return res.status(200).json({ success: true, products });
       }
 
       case "place_order":
@@ -149,58 +147,115 @@ export const interpretCommand = async (req, res) => {
   }
 };
 
+const searchProductsInDB = async (transcript) => {
+  if (!transcript) return [];
+
+  // Split transcript into words and create case-insensitive regex
+  const words = transcript
+    .trim()
+    .split(/\s+/)
+    .map((w) => new RegExp(w, "i"));
+
+  // Try AND match first (all words in product_name)
+  let products = await Product.find({
+    $and: words.map((word) => ({ product_name: word })),
+  }).limit(10);
+
+  // If no results, fallback to OR match (any word)
+  if (!products.length) {
+    products = await Product.find({
+      $or: words.map((word) => ({ product_name: word })),
+    }).limit(10);
+  }
+
+  return products;
+};
+
+// export const getProductsByName = async (req, res) => {
+//   try {
+//     let transcript = req.body.command;
+
+//     if (!transcript) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Transcript is required",
+//       });
+//     }
+
+//     let parsedText = await parseGeminiModel(transcript);
+
+//     if (parsedText.fallback_to_search_all) {
+//       try {
+//         let words = parsedText.product.trim().split(/\s+/);
+
+//         let regexFilters = words.map((word) => ({
+//           product_name: { $regex: word, $options: "i" },
+//         }));
+
+//         let similarProducts = await Product.find({ $and: regexFilters });
+
+//         if (!similarProducts || similarProducts.length === 0) {
+//           similarProducts = await Product.find({ $or: regexFilters });
+
+//           if (!similarProducts || similarProducts.length === 0) {
+//             return res.status(404).json({
+//               success: false,
+//               message: `No similar products found for "${parsedText.product}"`,
+//             });
+//           }
+//         }
+
+//         return res.status(200).json({
+//           success: true,
+//           message: `Similar products for "${parsedText.product}"`,
+//           products: similarProducts,
+//         });
+//       } catch (error) {
+//         console.error("Error searching all products:", error);
+//         return res.status(500).json({
+//           success: false,
+//           message: "Failed to search all products",
+//         });
+//       }
+//     }
+//   } catch (error) {
+//     console.error("Error fetching product by name:", error);
+//     return res.status(500).json({
+//       success: false,
+//       message: "Unable to fetch product",
+//     });
+//   }
+// };
+
 export const getProductsByName = async (req, res) => {
   try {
-    let transcript = req.body.command;
+    const transcript = req.body.command;
 
     if (!transcript) {
-      return res.status(400).json({
+      return res
+        .status(400)
+        .json({ success: false, message: "Transcript is required" });
+    }
+
+    const products = await searchProductsInDB(transcript);
+
+    if (!products.length) {
+      return res.status(404).json({
         success: false,
-        message: "Transcript is required",
+        message: `No products found for "${transcript}"`,
       });
     }
 
-    let parsedText = await parseGeminiModel(transcript);
-
-    if (parsedText.fallback_to_search_all) {
-      try {
-        let words = parsedText.product.trim().split(/\s+/);
-
-        let regexFilters = words.map((word) => ({
-          product_name: { $regex: word, $options: "i" },
-        }));
-
-        let similarProducts = await Product.find({ $and: regexFilters });
-
-        if (!similarProducts || similarProducts.length === 0) {
-          similarProducts = await Product.find({ $or: regexFilters });
-
-          if (!similarProducts || similarProducts.length === 0) {
-            return res.status(404).json({
-              success: false,
-              message: `No similar products found for "${parsedText.product}"`,
-            });
-          }
-        }
-
-        return res.status(200).json({
-          success: true,
-          message: `Similar products for "${parsedText.product}"`,
-          products: similarProducts,
-        });
-      } catch (error) {
-        console.error("Error searching all products:", error);
-        return res.status(500).json({
-          success: false,
-          message: "Failed to search all products",
-        });
-      }
-    }
+    return res.status(200).json({
+      success: true,
+      message: `Products matching "${transcript}"`,
+      products,
+    });
   } catch (error) {
-    console.error("Error fetching product by name:", error);
+    console.error("Error searching products:", error);
     return res.status(500).json({
       success: false,
-      message: "Unable to fetch product",
+      message: "Failed to search products",
     });
   }
 };
