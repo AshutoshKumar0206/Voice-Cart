@@ -1,8 +1,6 @@
 import Cart from "../model/cart.js";
 import Product from "../model/product.js";
 import User from "../model/user.js";
-import dotenv from "dotenv";
-dotenv.config();
 
 export const addToCart = async (req, res) => {
   try {

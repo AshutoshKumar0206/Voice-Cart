@@ -6,7 +6,7 @@ import { uploadImageToCloudinary } from "../utils/imageUploader.js";
 ============================ */
 export const createProduct = async (req, res) => {
   try {
-    const { product_name, price, description, quantity, category } = req.body;
+    const { product_name, price, description, quantity, category, tags } = req.body;
 
     if (!product_name || !price || !description || !quantity || !category) {
       return res.status(400).json({
@@ -36,6 +36,10 @@ export const createProduct = async (req, res) => {
       category,
       quantity,
       image: imageUpload.secure_url,
+      inStock: quantity > 0,
+      tags: tags || [],
+      avgRating: 0,
+      ratingCount: 0,
     });
 
     res.status(201).json({
@@ -111,6 +115,66 @@ export const getProductById = async (req, res) => {
       success: false,
       message: "Unable to fetch product",
     });
+  }
+};
+
+/* ============================
+      UPDATE PRODUCT RATING
+============================ */
+export const updateProductRating = async (req, res) => {
+  try {
+    const { productId, rating } = req.body;
+
+    if (!productId || rating == null)
+      return res.status(400).json({ success: false, message: "Product ID and rating are required" });
+
+    const product = await Product.findById(productId);
+    if (!product)
+      return res.status(404).json({ success: false, message: "Product not found" });
+
+    // Calculate new average rating
+    product.avgRating = ((product.avgRating * product.ratingCount) + rating) / (product.ratingCount + 1);
+    product.ratingCount += 1;
+
+    await product.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Product rating updated successfully",
+      product,
+    });
+  } catch (err) {
+    console.error("Error updating rating:", err);
+    res.status(500).json({ success: false, message: "Unable to update rating" });
+  }
+};
+
+/* ============================
+      UPDATE PRODUCT STOCK
+============================ */
+export const updateProductStock = async (req, res) => {
+  try {
+    const { productId, quantity } = req.body;
+    if (!productId || quantity == null)
+      return res.status(400).json({ success: false, message: "Product ID and quantity are required" });
+
+    const product = await Product.findById(productId);
+    if (!product)
+      return res.status(404).json({ success: false, message: "Product not found" });
+
+    product.quantity = quantity;
+    product.inStock = quantity > 0;
+
+    await product.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Product stock updated",
+      product,
+    });
+  } catch (err) {
+    console.error("Error updating stock:", err);
+    res.status(500).json({ success: false, message: "Unable to update stock" });
   }
 };
 
