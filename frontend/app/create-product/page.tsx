@@ -6,7 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
-import axiosClient from '@/lib/axios';
+// import axiosClient from '@/lib/axios';
+import axios from 'axios';
 import { toast } from 'sonner';
 
 export default function CreateProductPage() {
@@ -79,7 +80,7 @@ export default function CreateProductPage() {
         data.append('image', imageFile);
       }
 
-      const res = await axiosClient.post('/products/createProduct', data, {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/products/createProduct`, data, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
