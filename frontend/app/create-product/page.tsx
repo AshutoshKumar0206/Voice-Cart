@@ -12,12 +12,19 @@ import { toast } from 'sonner';
 export default function CreateProductPage() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
   const [formData, setFormData] = useState({
     product_name: '',
     category: '',
+    subCategory: '',
+    brand: '',
     quantity: '',
     price: '',
+    discount: '',
     description: '',
+    tags: '',
+    metadata: '',
+    inStock: true,
   });
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -33,7 +40,13 @@ export default function CreateProductPage() {
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value, type } = e.target;
+
+    if (type === 'checkbox') {
+      setFormData({ ...formData, [name]: (e.target as HTMLInputElement).checked });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -41,33 +54,55 @@ export default function CreateProductPage() {
 
     try {
       const data = new FormData();
+
       data.append('product_name', formData.product_name);
       data.append('category', formData.category);
+      data.append('subCategory', formData.subCategory);
+      data.append('brand', formData.brand);
       data.append('quantity', formData.quantity);
       data.append('price', formData.price);
+      data.append('discount', formData.discount);
       data.append('description', formData.description);
+      data.append('inStock', String(formData.inStock));
+
+      // tags = comma separated → convert to array
+      if (formData.tags) {
+        data.append('tags', JSON.stringify(formData.tags.split(',').map(t => t.trim())));
+      }
+
+      // metadata is JSON text → must parse before sending
+      if (formData.metadata) {
+        data.append('metadata', formData.metadata);
+      }
+
       if (imageFile) {
         data.append('image', imageFile);
       }
 
       const res = await axiosClient.post('/products/createProduct', data, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
 
       toast.success('Product created successfully');
       console.log(res.data);
+
       setFormData({
         product_name: '',
         category: '',
+        subCategory: '',
+        brand: '',
         quantity: '',
         price: '',
+        discount: '',
         description: '',
+        tags: '',
+        metadata: '',
+        inStock: true,
       });
       setImageFile(null);
       setPreviewUrl(null);
-    } catch (err: any) {
+
+    } catch (err) {
       console.error(err);
       toast.error('Failed to create product');
     }
@@ -78,7 +113,8 @@ export default function CreateProductPage() {
       <h1 className="text-3xl font-bold mb-8 text-center">🛒 Create New Product</h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Drag & Drop Uploader */}
+        
+        {/* Upload Image */}
         <div
           {...getRootProps()}
           className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition ${
@@ -102,57 +138,49 @@ export default function CreateProductPage() {
         </div>
 
         {/* Product Name */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
-          <Input
-            type="text"
-            name="product_name"
-            value={formData.product_name}
-            onChange={handleChange}
-            placeholder="Wireless Headphones"
-            required
-          />
-        </div>
+        <InputField label="Product Name" name="product_name" value={formData.product_name} onChange={handleChange} />
 
         {/* Category */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-          <Input
-            type="text"
-            name="category"
-            value={formData.category}
-            onChange={handleChange}
-            placeholder="Electronics / Grocery"
-            required
-          />
-        </div>
+        <InputField label="Category" name="category" value={formData.category} onChange={handleChange} />
+
+        {/* SubCategory */}
+        <InputField label="Sub Category" name="subCategory" value={formData.subCategory} onChange={handleChange} />
+
+        {/* Brand */}
+        <InputField label="Brand" name="brand" value={formData.brand} onChange={handleChange} />
 
         {/* Quantity */}
+        <InputField type="number" label="Quantity" name="quantity" value={formData.quantity} onChange={handleChange} />
+
+        {/* Price */}
+        <InputField type="number" label="Price (₹)" name="price" value={formData.price} onChange={handleChange} />
+
+        {/* Discount */}
+        <InputField type="number" label="Discount (%)" name="discount" value={formData.discount} onChange={handleChange} />
+
+        {/* Tags */}
+        <InputField label="Tags (comma separated)" name="tags" value={formData.tags} onChange={handleChange} />
+
+        {/* Metadata */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
-          <Input
-            type="number"
-            name="quantity"
-            value={formData.quantity}
+          <label className="block text-sm font-medium text-gray-700 mb-1">Metadata (JSON)</label>
+          <Textarea
+            name="metadata"
+            value={formData.metadata}
             onChange={handleChange}
-            placeholder="10"
-            min={1}
-            required
+            placeholder='{"color":"Black", "model":"S23", "battery":"4000mAh"}'
           />
         </div>
 
-        {/* Price */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Price (in ₹)</label>
-          <Input
-            type="number"
-            name="price"
-            value={formData.price}
+        {/* In Stock Checkbox */}
+        <div className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            name="inStock"
+            checked={formData.inStock}
             onChange={handleChange}
-            placeholder="2999"
-            min={1}
-            required
           />
+          <label className="text-sm text-gray-700">In Stock</label>
         </div>
 
         {/* Description */}
@@ -162,16 +190,22 @@ export default function CreateProductPage() {
             name="description"
             value={formData.description}
             onChange={handleChange}
-            placeholder="Enter product details..."
             required
           />
         </div>
 
-        {/* Submit */}
-        <Button type="submit" className="w-full" onClick={handleSubmit}>
-          Create Product
-        </Button>
+        <Button type="submit" className="w-full">Create Product</Button>
+
       </form>
     </section>
+  );
+}
+
+function InputField({ label, name, value, onChange, type = 'text' }: any) {
+  return (
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+      <Input type={type} name={name} value={value} onChange={onChange} required />
+    </div>
   );
 }
