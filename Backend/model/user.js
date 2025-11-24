@@ -45,6 +45,15 @@ const userSchema = new mongoose.Schema(
         ref: "order",
       },
     ],
+
+    ratings: [
+      {
+        product: { type: mongoose.Schema.Types.ObjectId, ref: "product" },
+        rating: { type: Number, min: 1, max: 5 },
+      },
+    ],
+    preferences: [{ type: String }],
+    lastActive: { type: Date, default: Date.now },
   },
   { timestamps: true }
 );

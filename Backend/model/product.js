@@ -35,6 +35,10 @@ const productSchema = new mongoose.Schema(
       min: 5,
       max: 20,
     },
+    inStock: { type: Boolean, default: true },
+    tags: [{ type: String }],
+    avgRating: { type: Number, default: 0 },
+    ratingCount: { type: Number, default: 0 },
   },
   { timestamps: true }
 );
