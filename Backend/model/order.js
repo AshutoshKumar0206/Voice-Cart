@@ -9,15 +9,13 @@ const orderSchema = new mongoose.Schema(
 
     items: [
       {
-        product: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "product",
-        },
-        quantity: {
-          type: Number,
-        },
+        product: { type: mongoose.Schema.Types.ObjectId, ref: "product" },
+        quantity: { type: Number },
+        rating: { type: Number, min: 1, max: 5, default: null },
       },
     ],
+    deliveredAt: { type: Date },
+    reviewed: { type: Boolean, default: false },
 
     totalAmount: {
       type: Number,
