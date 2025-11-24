@@ -38,6 +38,8 @@ export const placeOrder = async (req, res) => {
     // Calculate total amount
     let totalAmount = 0;
 
+    // Build order items with additional fields
+    const orderItems = [];
     for (const item of cart.items) {
       const product = await Product.findById(item.product);
 
@@ -49,14 +51,22 @@ export const placeOrder = async (req, res) => {
       }
 
       totalAmount += product.price * item.quantity;
+
+      orderItems.push({
+        product: product._id,
+        quantity: item.quantity,
+        rating: null,          // Rating not yet given
+      });
     }
 
-    // Create order
+    // Create order with deliveredAt timestamp
     const order = await Order.create({
       user: userId,
-      items: cart.items,
-      orderAmount: totalAmount,
+      items: orderItems,
+      totalAmount: totalAmount,
       status: "Delivered",
+      deliveredAt: new Date(),  // store delivery timestamp
+      reviewed: false,          // initially false
     });
 
     res.status(201).json({
@@ -91,7 +101,7 @@ export const getOrders = async (req, res) => {
     }
 
     const orders = await Order.find({ user: userId })
-      .populate("items.product", "product_name price image")
+      .populate("items.product", "product_name price image category inStock tags")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
@@ -107,8 +117,8 @@ export const getOrders = async (req, res) => {
       success: true,
       currentPage: page,
       ordersPerPage: limit,
-      totalOrders: orders.length,
-      totalPages: Math.ceil(orders.length / limit),
+      totalOrders: await Order.countDocuments({ user: userId }),
+      totalPages: Math.ceil(await Order.countDocuments({ user: userId }) / limit),
       orders,
       message: "Orders fetched successfully",
     });

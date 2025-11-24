@@ -1,7 +1,6 @@
 import userModel from "../model/user.js";
 import Product from "../model/product.js";
 import OTP from "../model/otp.js";
-import dotenv from "dotenv";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import otpGenerator from "otp-generator";
@@ -10,8 +9,6 @@ import pendingUserModel from "../model/pendingUser.js";
 import Cart from "../model/cart.js";
 import mongoose from "mongoose";
 import { emailQueue } from "../utils/queue.js";
-
-dotenv.config();
 
 /* ============================
       SIGN UP
