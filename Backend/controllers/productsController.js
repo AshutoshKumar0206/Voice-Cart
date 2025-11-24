@@ -6,8 +6,20 @@ import { uploadImageToCloudinary } from "../utils/imageUploader.js";
 ============================ */
 export const createProduct = async (req, res) => {
   try {
-    const { product_name, price, description, quantity, category, tags } = req.body;
+    const {
+      product_name,
+      price,
+      description,
+      quantity,
+      category,
+      subCategory,
+      brand,
+      discount,
+      tags,
+      metadata,
+    } = req.body;
 
+    /* ---------- VALIDATION ---------- */
     if (!product_name || !price || !description || !quantity || !category) {
       return res.status(400).json({
         success: false,
@@ -15,6 +27,7 @@ export const createProduct = async (req, res) => {
       });
     }
 
+    /* ---------- IMAGE REQUIRED ---------- */
     if (!req.file) {
       return res.status(400).json({
         success: false,
@@ -22,6 +35,7 @@ export const createProduct = async (req, res) => {
       });
     }
 
+    /* ---------- UPLOAD IMAGE ---------- */
     const imageUpload = await uploadImageToCloudinary(
       req.file,
       process.env.FOLDER,
@@ -29,27 +43,51 @@ export const createProduct = async (req, res) => {
       1000
     );
 
+    /* ---------- PARSE OPTIONAL FIELDS ---------- */
+    let parsedTags = [];
+    if (tags) {
+      try {
+        parsedTags = JSON.parse(tags); // expects tags as JSON string array
+      } catch {
+        parsedTags = [tags]; // if single string
+      }
+    }
+
+    let parsedMetadata = {};
+    if (metadata) {
+      try {
+        parsedMetadata = JSON.parse(metadata);
+      } catch {
+        parsedMetadata = {};
+      }
+    }
+
+    /* ---------- CREATE PRODUCT ---------- */
     const newProduct = await Product.create({
       product_name,
       price,
       description,
       category,
+      subCategory: subCategory || "",
+      brand: brand || "",
       quantity,
+      discount: discount || undefined,
+      metadata: parsedMetadata,
+      tags: parsedTags,
       image: imageUpload.secure_url,
       inStock: quantity > 0,
-      tags: tags || [],
       avgRating: 0,
       ratingCount: 0,
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: "Product created successfully",
       product: newProduct,
     });
   } catch (error) {
     console.error("Error creating product:", error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Unable to create product",
     });
