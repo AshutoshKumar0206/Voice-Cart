@@ -1,0 +1,72 @@
+prod_id,product_name,category,subCategory,price,description,avgRating,ratingCount
+"69242ca7eddd458d1f519430","Atomic Habits","Books","Self Help",499,"Bestselling self-help book by James Clear focused on habit-building and personal growth.",3.09300833867864,3118
+"69242d1feddd458d1f519432","Rich Dad Poor Dad","Books","Finance",500,"Personal finance classic by Robert Kiyosaki explaining money mindset and financial literacy.",1.6519021739130435,1840
+"69242f3ce865298abb12bc13","The Psychology of Money","Books","Finance",449,"A bestselling finance book by Morgan Housel focusing on human behavior and money management.",2.006424104604889,1759
+"69242fc9e865298abb12bc16","Ikigai: The Japanese Secret to a Long and Happy Life","Books","Self Help",299,"A motivational book exploring the Japanese concept of finding purpose and joy.",4.078477690288714,2286
+"69243032e865298abb12bc18","The Alchemist","Books","Fiction",339,"A philosophical novel by Paulo Coelho about following one’s dreams and destiny.",4.628166226912929,1516
+"692430cce865298abb12bc1a","Think and Grow Rich","Books","Self Help",299,"Napoleon Hill’s classic guide to achieving success through mindset and discipline.",2.3074967405475877,1534
+"69243130e865298abb12bc1c","Wings of Fire","Books","Biography",398,"Autobiography of A.P.J. Abdul Kalam, detailing his life journey and achievements.",1.3903133903133904,1755
+"6924317ee865298abb12bc1e","The Intelligent Investor","Books","Finance",801,"Benjamin Graham’s classic book on value investing and long-term financial strategies.",4.355588972431078,1995
+"692431bfe865298abb12bc20","A Million Thoughts","Books","Spirituality",350,"A meditation and mindfulness guide written by Om Swami.",1.9745406824146983,1143
+"69243205e865298abb12bc22","Sapiens: A Brief History of Humankind","Books","History",899,"Yuval Noah Harari’s acclaimed book exploring human evolution and civilization.",3.7106194690265486,1243
+"69243284e865298abb12bc24","Lego Classic Creative Brick Set","Toys","Building Sets",2499,"A creative building block set with 500+ colorful Lego bricks for kids.",3.1712306438467808,1227
+"692432dfe865298abb12bc26","Hot Wheels Car Pack","Toys","Vehicles",499,"Set of 5 die-cast Hot Wheels cars ideal for racing and collecting.",3.3552523874488407,1466
+"69243365e865298abb12bc2c","Barbie Fashion Doll","Toys","Dolls",896,"Stylish Barbie doll with fashionable outfit and accessories.",3.668191414496833,1421
+"692433b6e865298abb12bc2e","Nerf N-Strike Elite Blaster","Toys","Action Toys",1999,"High-performance Nerf blaster with soft foam darts for action play.",4.1120677966101695,1475
+"69243417e865298abb12bc31","Rubik's Cube 3x3","Toys","Puzzle Toys",300,"Classic 3x3 Rubik’s Cube puzzle for brain training and fun.",3.811913357400722,1662
+"69243466e865298abb12bc33","Remote Control Monster Truck","Toys","Remote Control Toys",1599,"High-speed remote control monster truck with shock absorbers and durable tires.",4.576735459662289,1599
+"692434ace865298abb12bc35","Stuffed Teddy Bear","Toys","Soft Toys",399,"Soft and cuddly teddy bear stuffed toy perfect for kids and gifting.",3.2957186544342507,981
+"6924351de865298abb12bc37","Magnetic Building Tiles Set","Toys","Educational Toys",1696,"Colorful magnetic tiles for creative building and STEM learning.",2.924168912848158,1113
+"69243599e865298abb12bc39","Kids Kitchen Play Set","Toys","Pretend Play",899,"Mini kitchen set with toy utensils and food items for pretend play.",4.355639730639731,1188
+"69243612e865298abb12bc3b","Jigsaw Puzzle 1000 Pieces","Toys","Puzzle Toys",499,"Beautiful 1000-piece jigsaw puzzle suitable for adults and kids.",3.3841592201462225,1231
+"69243cd6e865298abb12bc3d","Stainless Steel Water Bottle","Home & Kitchen","Kitchenware",349,"Durable stainless steel bottle that keeps drinks hot or cold for hours.",2.927047146401985,1209
+"69243d21e865298abb12bc3f","Non-Stick Frying Pan","Home & Kitchen","Cookware",799,"High-quality non-stick frying pan suitable for daily cooking.",2.986666666666667,1305
+"69243d70e865298abb12bc41","Electric Kettle","Home & Kitchen","Appliances",999,"Fast-boiling electric kettle with auto shut-off safety feature.",3.4402325581395345,1290
+"69243dc4e865298abb12bc43","Microfiber Cleaning Cloth Set","Home & Kitchen","Cleaning Supplies",197,"Pack of 5 microfiber cloths ideal for dusting and cleaning surfaces.",3.7123769338959214,1422
+"6924426ce865298abb12bc45","Wooden Chopping Board","Home & Kitchen","Kitchen Tools",249,"Classic wooden chopping board perfect for cutting vegetables and fruits.",1.521280276816609,1156
+"692442bee865298abb12bc47","Stainless Steel Spice Box","Home & Kitchen","Storage",699,"Traditional Indian masala box with 7 containers for spices.",1.4218364197530864,1296
+"692442fde865298abb12bc49","Cotton Bed Sheet King Size","Home & Kitchen","Home Furnishing",1296,"Soft and breathable cotton bed sheet with two pillow covers.",1.8164668265387691,1251
+"69244358e865298abb12bc4b","Modern Table Lamp","Home & Kitchen","Lighting",1599,"Stylish bedside table lamp with warm LED lighting.",2.5146511627906976,1290
+"692443aae865298abb12bc4d","Vacuum Insulated Lunch Box","Home & Kitchen","Kitchen Storage",895,"Three-container lunch box with vacuum insulation to keep food hot for hours.",3.74864,1250
+"69244409e865298abb12bc4f","Ceramic Coffee Mug Set","Home & Kitchen","Drinkware",349,"Set of 2 printed ceramic coffee mugs for home or office use.",4.19748743718593,1393
+"69244a9eb7fb27683d01c667","Cricket Leather Ball","Sports","Cricket",499,"Durable red leather cricket ball ideal for practice and matches.",3.2929800412938746,1453
+"69244aedb7fb27683d01c669","Football","Sports","Football",899,"High-quality football suitable for training and casual play.",4.546648612051455,1477
+"69244b46b7fb27683d01c66b","Badminton Racket Set","Sports","Badminton",1299,"Lightweight racket pair with shuttlecocks for beginners and intermediates.",3.6347490347490345,1036
+"69244b4d22280aa81104f501","iPhone 14 Pro","Electronics","Mobile",124999,"Premium flagship smartphone with industry-leading camera, A16 Bionic chip, and ProMotion display for smooth visuals",3.0044871794871795,1092
+"69244b91b7fb27683d01c66d","Yoga Mat","Sports","Fitness",699,"Anti-slip yoga mat ideal for fitness, stretching, and meditation.",3.420595744680851,1175
+"69244be6b7fb27683d01c66f","Gym Dumbbell Set","Sports","Fitness Equipment",1599,"Durable dumbbell set with adjustable weights for home workouts.",4.533333333333333,1194
+"69244bfe22280aa81104f503","Samsung Galaxy S23","Electronics","Mobile",84999,"High-performance Android smartphone with Snapdragon 8 Gen 2, brilliant AMOLED display and reliable battery life",1.4398457583547557,2334
+"69244c42b7fb27683d01c671","Table Tennis Bat & Ball Kit","Sports","Table Tennis",749,"Premium TT bat with 3 balls for beginners and intermediate players.",3.520096463022508,1244
+"69244cb6b7fb27683d01c673","Basketball Size 7","Sports","Basketball",799,"Durable rubber basketball suitable for both indoor and outdoor play.",3.7655367231638417,1239
+"69244cffb7fb27683d01c675","Skipping Rope Speed Training","Sports","Fitness",200,"Adjustable speed rope ideal for cardio, stamina, and boxing workouts.",2.103401759530792,1705
+"69244d3822280aa81104f505","OnePlus 11","Electronics","Mobile",56999,"Fast and fluid smartphone with OxygenOS, Hasselblad tuned cameras and ultra-fast 100W charging",3.696007789678676,1027
+"69244d5db7fb27683d01c67b","Cricket Bat English Willow","Sports","Cricket",3499,"Premium-grade English willow cricket bat for advanced gameplay.",1.5292642140468227,1196
+"69244d9cb7fb27683d01c67d","Swimming Goggles Anti-Fog","Sports","Swimming",549,"Comfortable anti-fog goggles suitable for both beginners and professionals.",4.029719484457923,1319
+"69244da022280aa81104f507","Macbook Air M2","Electronics","Laptop",109999,"Lightweight productivity laptop with Apple M2 chip, silent fanless design and excellent battery life for creators and students",1.797501734906315,1441
+"69244dff22280aa81104f509","Lenovo ThinkPad E14","Electronics","Laptop",62999,"Business-grade laptop offering a durable build, comfortable keyboard and enterprise-level security options",2.59841449603624,883
+"69244e7222280aa81104f50b","Asus ROG Strix G15","Electronics","Laptop",119999,"High-performance gaming laptop with powerful GPU, advanced cooling and RGB lighting for immersive gaming",3.8121867881548974,878
+"69244ed722280aa81104f50d","Apple AirPods Pro","Electronics","Audio",24999,"Wireless earbuds with active noise cancellation, spatial audio and comfortable in-ear fit for on-the-go listening",1.4665938864628822,916
+"69244f3622280aa81104f50f","Sony WH-1000XM4 Headphones","Electronics","Audio",29999,"Premium over-ear noise-cancelling headphones delivering crystal-clear audio, long battery life and reliable Bluetooth connectivity",1.5968809073724008,1058
+"69244fe122280aa81104f511","Boat BassHeads 225","Electronics","Audio",699,"Budget wired earphones with punchy bass and ergonomic metallic design for comfortable daily use",4.5103515625,1024
+"6924505222280aa81104f513","Samsung 55” 4K Smart TV","Electronics","TV",62999,"Ultra-HD 55 inch Smart TV with HDR support, crisp colors and built-in streaming apps for a cinematic experience at home",1.5486007462686566,1072
+"692450a922280aa81104f515","LG 43” Smart LED TV","Electronics","TV",36999,"Compact 43 inch smart LED TV ideal for bedrooms with sharp picture quality and built-in entertainment apps",3.095698924731183,1209
+"6924519a22280aa81104f517","Logitech MX Master 3 Mouse","Electronics","Accessories",8999,"Ergonomic precision wireless mouse built for productivity with multi-device support and programmable buttons",3.52428810720268,1194
+"6924520622280aa81104f519","SanDisk 1TB SSD","Electronics","Storage",8999,"High-speed 1TB SSD for fast boot times, quick file transfer and reliable storage for laptops and desktops",1.9169444444444446,720
+"692452db22280aa81104f51b","Canon EOS 1500D","Electronics","Camera",41999,"Entry-level DSLR with a high-resolution sensor and easy controls—great for beginners learning photography",3.2953519256308104,753
+"6924535122280aa81104f51d","Levi’s Slim Fit Jeans","Clothing","Men Wear",2999,"Comfortable and stylish denim jeans in a modern slim-fit cut suitable for casual and semi-formal looks",3.483037974683544,790
+"692453b422280aa81104f51f","Nike Running Shoes","Clothing","Footwear",5499,"Lightweight running shoes designed for daily training with breathable mesh and responsive cushioning",4.16135593220339,885
+"6924542822280aa81104f521","Adidas Hooded Sweatshirt","Clothing","Sportswear",2499,"Cozy fleece hoodie with classic Adidas branding—ideal for cooler weather and casual athletic wear",3.9827995255041517,843
+"6924549e22280aa81104f523","US Polo Assn Casual Shirt","Clothing","Men Wear",1499,"Classic casual shirt with soft cotton fabric and a neat button-down design suitable for everyday wear",3.146690307328605,846
+"6924550e22280aa81104f525","Wrangler Cargo Pants","Clothing","Men Wear",2393,"Durable cargo pants with multiple pockets and reinforced stitching—great for outdoor activities and travel",1.3426724137931034,928
+"6924557222280aa81104f527","H&M Cotton T-shirt","Clothing","Casual Wear",499,"Simple, soft cotton t-shirt in multiple colors—perfect for everyday casual comfort",2.557247132429614,959
+"692455df22280aa81104f529","Allen Solly Formal Shirt","Clothing","Formal Wear",2199,"Tailored formal shirt with wrinkle-resistant finishing—suitable for office and formal events",3.0189384800965016,829
+"6924568822280aa81104f52b","Raymond Blazer","Clothing","Casual Wear",7499,"Elegant blazer with refined tailoring and premium fabric—ideal for formal events and weddings",1.7317386231038505,857
+"6924570a22280aa81104f52d","Killer Denim Jacket","Clothing","Outerwear",3299,"Rugged denim jacket with classic styling—perfect for layering and casual fashion statements",2.294943820224719,890
+"6924577a22280aa81104f52f","Nivea Body Lotion","Health & Beauty","Skin Care",299,"Lightweight body lotion that provides long-lasting hydration and keeps skin soft and smooth",1.7870032223415682,931
+"692457e322280aa81104f531","Dove Hair Shampoo","Helath & Beauty","Hair Care",199,"Gentle shampoo formulated to nourish hair, reduce breakage and leave strands soft and manageable",1.4562979189485212,913
+"6924586422280aa81104f533","Prestige Pressure Cooker","Home & Kitchen","Cookware",3499,"Sturdy stainless steel pressure cooker designed for fast, safe and efficient cooking of everyday meals",1.5376739562624255,1006
+"692458b422280aa81104f535","Milton Thermosteel Flask","Home & Kitchen","Drinkware",799,"Vacuum insulated thermosteel flask that keeps beverages hot or cold for hours—perfect for daily use",3.3882191780821915,1095
+"692459c422280aa81104f537","Solimo Bedsheet Double","Home & Kitchen","Bedding",1499,"Soft double bedsheet with durable weave and colorfast printing for comfortable nightly sleep",1.7512704174228675,1102
+"69245a1f22280aa81104f539","Philips LED Bulb 12W","Home & Kitchen","Lighting",149,"Energy-efficient LED bulb offering bright, flicker-free light and long operational life",1.4730617608409986,761
+"69245a8922280aa81104f53b","Bajaj Room Heater","Home & Kitchen","Appliances",2499,"Portable room heater providing quick warmth for small to medium-sized rooms with adjustable heat settings",4.232020997375328,762
+"69245b8a22280aa81104f53d","Crompton Ceiling Fan","Home & Kitchen","Appliances",2499,"Energy-efficient ceiling fan offering consistent airflow and low noise levels for comfortable living spaces",3.012837837837838,740
