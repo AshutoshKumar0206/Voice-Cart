@@ -5,6 +5,7 @@ import { Mic, MicOff, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import axiosClient from "@/lib/axios";
+import { Card, CardContent } from "./ui/card";
 
 type SpeechRecognition = typeof window extends { SpeechRecognition: infer T }
   ? T
@@ -87,11 +88,12 @@ export default function VoiceInput() {
       // Clear transcript right after sending
       setTranscript("");
 
-      if (data.success && data.productData) {
-        const formattedName = encodeURIComponent(
-          data.productData.product_name.toLowerCase().replace(/\s+/g, "-")
-        );
-        router.push(`/search?q=${formattedName}`);
+      if (data.success && data.products.length > 0) {
+        // const formattedName = (
+        //   data.productData.product_name.toLowerCase().replace(/\s+/g, "-")
+        // );
+        console.log(data.products[0].product_name.toLowerCase())
+        router.push(`/search?q=${data.products[0].product_name.toLowerCase()}`);
       }
     } catch (error) {
       console.error("Error sending transcript:", error);
@@ -113,9 +115,13 @@ export default function VoiceInput() {
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end space-y-2">
       {/* Transcript Preview */}
       {transcript && (
-        <div className="bg-white border px-3 py-2 rounded-md shadow text-sm max-w-sm">
-          <strong>You said:</strong> {transcript}
-        </div>
+        <Card className="bg-white shadow-lg border border-gray-200 max-w-sm">
+          <CardContent className="p-3">
+            <p className="text-sm text-gray-700">
+              <span className="font-semibold">You said:</span> {transcript}
+            </p>
+          </CardContent>
+        </Card>
       )}
 
       {/* Mic Button */}
