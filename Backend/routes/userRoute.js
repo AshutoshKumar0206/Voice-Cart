@@ -29,6 +29,6 @@ router.get("/dashboard/:id", isAuthenticated, dashboard);
 router.get("/me", isAuthenticated, getMe);
 
 // Get Recommended Products
-router.get("/recommendProducts/:id", isAuthenticated, recommendProducts);
+router.get("/recommendProducts", isAuthenticated, recommendProducts);
 
 export default router;

@@ -3,6 +3,13 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import {Google_Sans_Code} from "next/font/google"
+
+const googleSansFont = Google_Sans_Code({
+  subsets: ["latin"],
+  weight: "400",
+  fallback: ["Arial", "sans-serif"],
+})
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -44,7 +51,7 @@ export default function Newsletter() {
   return (
     <section
       ref={sectionRef}
-      className="relative bg-gradient-to-r from-blue-50 via-white to-blue-50 py-20 overflow-hidden"
+      className={`relative bg-gradient-to-r from-blue-50 via-white to-blue-50 py-20 overflow-hidden ${googleSansFont.className}`}
     >
       {/* Decorative background blobs */}
       <div className="absolute inset-0 -z-10 opacity-30 blur-3xl">

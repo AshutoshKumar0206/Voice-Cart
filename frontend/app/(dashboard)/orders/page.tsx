@@ -39,7 +39,7 @@ export default function OrdersPage() {
       if (!user) return;
 
       try {
-        const res = await axiosClient.get(`/order/getOrders/${user.id}`);
+        const res = await axiosClient.get(`/order/getOrders`);
         console.log(res.data);
         if (res.data.success) {
           setOrders(res.data.orders);

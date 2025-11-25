@@ -1,13 +1,20 @@
 import axiosClient from "@/lib/axios";
 import { toast } from "sonner";
 
+interface AddressData {
+  fullName: string;
+  address: string;
+  phone: string;
+}
+
 /**
- * Places an order for the current user.
+ * Places an order for the current user with shipping address.
  * @param userId - The ID of the currently logged-in user.
+ * @param address - Shipping address details.
  */
-export const buyNow = async (userId: string) => {
+export const buyNow = async (userId: string, address: AddressData) => {
   try {
-    const res = await axiosClient.post(`/order/placeOrder/${userId}`);
+    const res = await axiosClient.post(`/order/placeOrder/${userId}`, { address });
     if (res.data.success) {
       toast.success("✅ Order placed successfully!");
     } else {

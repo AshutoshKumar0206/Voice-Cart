@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { Mic, MicOff, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import axiosClient from "@/lib/axios";
 import { Card, CardContent } from "./ui/card";
 
@@ -32,6 +32,7 @@ export default function VoiceInput() {
   const [loading, setLoading] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const router = useRouter();
+  const pathname = usePathname();
 
   const startRecognition = () => {
     const SpeechRecognition =
@@ -88,12 +89,35 @@ export default function VoiceInput() {
       // Clear transcript right after sending
       setTranscript("");
 
-      if (data.success && data.products.length > 0) {
-        // const formattedName = (
-        //   data.productData.product_name.toLowerCase().replace(/\s+/g, "-")
-        // );
-        console.log(data.products[0].product_name.toLowerCase())
-        router.push(`/search?q=${data.products[0].product_name.toLowerCase()}`);
+      if (data.success) {
+        if(data.products && data.products.length > 0){
+          router.push(`/search?q=${data.products[0].product_name.toLowerCase()}`);
+        }
+        else if(data.signin){
+          if(pathname === '/signin'){
+            router.push('/signin?success=true')
+          }
+          else {
+            router.push('/signin')
+          }
+        }
+        else if(data.signup){
+          if(pathname === '/signup'){
+            router.push('/signup?success=true')
+          }
+          else {
+            router.push('/signup')
+          }
+        }
+        else if(data.info){
+          const info = data.info;
+          if(pathname === '/signin'){
+            router.push(`/signin?email=${info.email}&password=${info.password}`)
+          }
+          else if(pathname === '/signup'){
+            router.push(`/signup?name=${info.name}&email=${info.email}&phone=${info.phone}&password=${info.password}`)
+          }
+        }
       }
     } catch (error) {
       console.error("Error sending transcript:", error);

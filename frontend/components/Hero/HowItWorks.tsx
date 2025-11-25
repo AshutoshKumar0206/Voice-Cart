@@ -5,6 +5,13 @@ import { Mic, CheckCircle, Truck, ArrowRight } from 'lucide-react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Badge } from '@/components/ui/badge'; // shadcn component
+import {Google_Sans_Code} from "next/font/google"
+
+const googleSansFont = Google_Sans_Code({
+  subsets: ["latin"],
+  weight: "400",
+  fallback: ["Arial", "sans-serif"],
+})
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -57,7 +64,7 @@ export default function HowItWorks() {
   }, []);
 
   return (
-    <section className="h-screen relative bg-gradient-to-b from-white to-blue-50 flex items-center">
+    <section className={`h-screen relative bg-gradient-to-b from-white to-blue-50 flex items-center ${googleSansFont.className}`}>
       <div className="max-w-6xl mx-auto px-6 text-center w-full">
         <h2 className="text-3xl md:text-4xl font-bold mb-16 text-gray-900">
           How It Works

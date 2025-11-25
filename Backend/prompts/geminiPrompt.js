@@ -19,6 +19,7 @@ Guidelines:
 - For complete product names (like "Dove face wash" or "Nivea cream"), you can omit "fallback_to_search_all"
 - Avoid including unnecessary words like "the", "a", "my"
 - Return **only** the raw JSON object text without any markdown formatting, code blocks, or extra text
+- For emails and password make sure to not add white spaces in between the text remove the spaces if any
 
 Examples:
 
@@ -30,6 +31,15 @@ Output: { "intent": "remove_from_cart", "product": "eggs" }
 
 Input: "Can you place my order now?"
 Output: { "intent": "place_order" }
+
+Input: "Sign In"
+Output: {"intent": "sign_in"}
+
+Input: "Sign Up"
+Output: {"intent": "sign_up"}
+
+Input: "Name Aditya Email xyz@gmail.com Phone 9999999999 Password xyz123
+Output: {"intent": "information", "info": {"name": "Aditya", "email": "xyz@gmail.com", "phone": "9999999999", "password": "xyz123"}}
 
 Input: "Search for cooking oil"
 Output: { "intent": "search_product", "product": "cooking oil", "similar_products": ["olive oil", "mustard oil", "sunflower oil"], "fallback_to_search_all": true }

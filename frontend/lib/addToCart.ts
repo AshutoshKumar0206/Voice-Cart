@@ -14,6 +14,7 @@ export const addToCart = async (productId: string, refreshCart: () => void) => {
   } catch (err: any) {
     if (err?.response?.status === 401) {
       toast.error("You must be logged in to add to cart.");
+      location.href = '/signup';
     } else {
       toast.error("Something went wrong while adding to cart.");
     }

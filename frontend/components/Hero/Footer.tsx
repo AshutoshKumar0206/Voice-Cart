@@ -2,10 +2,17 @@
 
 import { Facebook, Twitter, Instagram } from 'lucide-react';
 import Link from 'next/link';
+import {Google_Sans_Code} from "next/font/google"
+
+const googleSansFont = Google_Sans_Code({
+  subsets: ["latin"],
+  weight: "400",
+  fallback: ["Arial", "sans-serif"],
+})
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-gray-300 py-12">
+    <footer className={`bg-gray-900 text-gray-300 py-12 ${googleSansFont.className}`}>
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
         {/* Company Info */}
         <div>

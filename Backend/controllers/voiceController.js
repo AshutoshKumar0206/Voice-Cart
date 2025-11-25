@@ -129,9 +129,22 @@ export const interpretCommand = async (req, res) => {
         return res.status(200).json({ success: true, products });
       }
 
-      case "place_order":
+      case "place_order": {
         return await placeOrder(req, res);
+      }
 
+      case "sign_in": {
+        return res.status(200).json({success: true, signin: true})
+      }
+
+      case "sign_up": {
+        return res.status(200).json({success: true, signup: true})
+      }
+
+      case "information": {
+        return res.status(200).json({success: true, info: parsedText.info})
+      }
+      
       default:
         return res.status(400).json({
           success: false,

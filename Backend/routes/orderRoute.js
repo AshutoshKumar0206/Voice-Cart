@@ -4,7 +4,7 @@ import { isAuthenticated } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
-router.post("/placeOrder/:id", isAuthenticated, placeOrder);
-router.get("/getOrders/:id", isAuthenticated, getOrders);
+router.post("/placeOrder", isAuthenticated, placeOrder);
+router.get("/getOrders", isAuthenticated, getOrders);
 
 export default router;

@@ -9,6 +9,7 @@ import pendingUserModel from "../model/pendingUser.js";
 import Cart from "../model/cart.js";
 import mongoose from "mongoose";
 import { emailQueue } from "../utils/queue.js";
+import axios from "axios";
 
 /* ============================
       SIGN UP
@@ -286,9 +287,33 @@ export const dashboard = async (req, res) => {
 ============================ */
 export const getMe = async (req, res) => {
   try {
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized: No user in request",
+      });
+    }
+
     const userId = req.user.id;
 
-    const user = await userModel.findById(userId).select("-password");
+    const user = await userModel
+      .findById(userId)
+      .select("-password")
+      .populate({
+        path: "orders",
+        populate: {
+          path: "items.product",
+          model: "product",
+          select: "product_name price images category description",
+        },
+      });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
 
     res.status(200).json({
       success: true,
@@ -298,10 +323,26 @@ export const getMe = async (req, res) => {
         email: user.email,
         phone: user.phone,
         createdAt: user.createdAt,
-        orders: user.orders,
+        orders: user.orders.map(order => ({
+          orderId: order._id,
+          status: order.status,
+          totalAmount: order.totalAmount,
+          deliveredAt: order.deliveredAt,
+          reviewed: order.reviewed,
+          createdAt: order.createdAt,
+          items: order.items.map(item => ({
+            productId: item.product?._id ?? null,
+            productName: item.product?.product_name ?? null,
+            price: item.product?.price ?? null,
+            quantity: item.quantity,
+            category: item.product?.category ?? null,
+            image: item.product?.images?.[0] ?? null,
+          })),
+        })),
       },
     });
   } catch (err) {
+    console.error("getMe Error:", err);
     res.status(500).json({
       success: false,
       message: "Failed to retrieve user details",
@@ -314,67 +355,58 @@ export const getMe = async (req, res) => {
 ============================ */
 export const recommendProducts = async (req, res) => {
   try {
-    const userId = req.params.id;
+    const userId = req.user.id;
 
-    if (!userId)
+    if (!userId) {
       return res.status(400).json({
         success: false,
         message: "User ID is required",
       });
+    }
 
+    // Ensure user exists & has a cart — optional check
     const userCart = await Cart.findOne({ user: userId });
 
-    if (!userCart || userCart.items.length === 0)
-      return res.status(404).json({
-        success: false,
-        message: "No products in cart to recommend from",
-      });
+    if (!userCart) {
+      console.log("No cart found for user — still recommending based on behavior model");
+    }
 
-    const recommended = await Product.aggregate([
-      {
-        $facet: {
-          electronics: [
-            { $match: { category: "Electronics" } },
-            { $sample: { size: 3 } },
-          ],
-          fashion: [
-            { $match: { category: "Fashion" } },
-            { $sample: { size: 2 } },
-          ],
-          grocery: [
-            { $match: { category: "Grocery" } },
-            { $sample: { size: 2 } },
-          ],
-          books: [
-            { $match: { category: "Books" } },
-            { $sample: { size: 2 } },
-          ],
-        },
-      },
-      {
-        $project: {
-          recommendedProducts: {
-            $concatArrays: [
-              "$electronics",
-              "$fashion",
-              "$grocery",
-              "$books",
-            ],
-          },
-        },
-      },
-    ]);
+    // STEP 1: request recommendations from Flask SVD service
+    console.log("Sending request → Flask model:", userId);
 
-    res.status(200).json({
-      success: true,
-      recommendedProducts:
-        recommended[0]?.recommendedProducts || [],
+    const flaskResponse = await axios.get("http://127.0.0.1:5000/recommend", {
+      params: { user_id: userId, n: 10 },
     });
+
+    const recommendedList = flaskResponse.data.recommendations;
+
+    if (!recommendedList || recommendedList.length === 0) {
+      return res.status(200).json({
+        success: true,
+        recommendedProducts: [],
+        message: "No recommendations generated",
+      });
+    }
+
+    // recommendedList contains product entries from products.csv
+    // e.g. [{product_id:name, category, price, ...}]
+
+    const productIds = recommendedList.map(item => item.product_id);
+
+    // STEP 2: Fetch actual MongoDB product objects
+    const mongoProducts = await Product.find({ product_id: { $in: productIds } });
+
+    // STEP 3: Return final merged recommendations
+    return res.status(200).json({
+      success: true,
+      recommendedProducts: mongoProducts,
+    });
+
   } catch (error) {
-    console.error("Recommendation Error:", error);
-    res.status(500).json({
+    console.error("Recommendation Error:", error.message);
+    return res.status(500).json({
       success: false,
-      message: "Unable to recommend products",
+      message: "Unable to fetch recommendations",
     });
   }
 };

@@ -24,7 +24,7 @@ interface OrderItem {
 
 interface Order {
   _id: string;
-  items: OrderItem[];
+  items: any;
   createdAt: string;
 }
 
@@ -33,7 +33,7 @@ interface User {
   email: string;
   phone: string;
   createdAt: string;
-  orders?: Order[];
+  orders?: any;
 }
 
 export default function ProfilePage() {
@@ -49,6 +49,7 @@ export default function ProfilePage() {
       try {
         const res = await axiosClient.get('/user/me');
         setUserProfile(res.data.user);
+        console.log(res);
       } catch (err) {
         console.error('Error fetching user', err);
       } finally {
@@ -100,18 +101,18 @@ export default function ProfilePage() {
         </CardHeader>
         <CardContent className="space-y-6">
           {userProfile.orders?.length ? (
-            userProfile.orders.map((order) => (
+            userProfile.orders.map((order: any) => (
               <div key={order._id} className="border rounded-lg p-4">
                 <p className="text-sm text-gray-500 mb-2">
                   Ordered on: {format(new Date(order.createdAt), 'PPPpp')}
                 </p>
                 <ul className="space-y-2">
-                  {order.items.map((item, index) => (
+                  {order.items.map((item: any, index: any) => (
                     <li key={index} className="flex justify-between items-center">
                       <div>
-                        <p className="font-semibold">{item.product.product_name}</p>
+                        <p className="font-semibold">{item.productName}</p>
                         <p className="text-sm text-muted-foreground">
-                          {item.product.category} | ₹{item.product.price}
+                          {item.category} | ₹{item.price}
                         </p>
                       </div>
                       <Badge variant="outline">x{item.quantity}</Badge>
