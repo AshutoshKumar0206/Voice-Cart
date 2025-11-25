@@ -287,9 +287,33 @@ export const dashboard = async (req, res) => {
 ============================ */
 export const getMe = async (req, res) => {
   try {
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized: No user in request",
+      });
+    }
+
     const userId = req.user.id;
 
-    const user = await userModel.findById(userId).select("-password");
+    const user = await userModel
+      .findById(userId)
+      .select("-password")
+      .populate({
+        path: "orders",
+        populate: {
+          path: "items.product",
+          model: "product",
+          select: "product_name price images category description",
+        },
+      });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
 
     res.status(200).json({
       success: true,
@@ -299,10 +323,26 @@ export const getMe = async (req, res) => {
         email: user.email,
         phone: user.phone,
         createdAt: user.createdAt,
-        orders: user.orders,
+        orders: user.orders.map(order => ({
+          orderId: order._id,
+          status: order.status,
+          totalAmount: order.totalAmount,
+          deliveredAt: order.deliveredAt,
+          reviewed: order.reviewed,
+          createdAt: order.createdAt,
+          items: order.items.map(item => ({
+            productId: item.product?._id ?? null,
+            productName: item.product?.product_name ?? null,
+            price: item.product?.price ?? null,
+            quantity: item.quantity,
+            category: item.product?.category ?? null,
+            image: item.product?.images?.[0] ?? null,
+          })),
+        })),
       },
     });
   } catch (err) {
+    console.error("getMe Error:", err);
     res.status(500).json({
       success: false,
       message: "Failed to retrieve user details",

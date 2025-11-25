@@ -35,11 +35,9 @@ export const placeOrder = async (req, res) => {
       });
     }
 
-    // Calculate total amount
     let totalAmount = 0;
-
-    // Build order items with additional fields
     const orderItems = [];
+
     for (const item of cart.items) {
       const product = await Product.findById(item.product);
 
@@ -55,28 +53,40 @@ export const placeOrder = async (req, res) => {
       orderItems.push({
         product: product._id,
         quantity: item.quantity,
-        rating: null,          // Rating not yet given
+        rating: null,
       });
     }
 
-    // Create order with deliveredAt timestamp
+    // Create Order
     const order = await Order.create({
       user: userId,
       items: orderItems,
-      totalAmount: totalAmount,
+      totalAmount,
       status: "Delivered",
-      deliveredAt: new Date(),  // store delivery timestamp
-      reviewed: false,          // initially false
+      deliveredAt: new Date(),
+      reviewed: false,
     });
 
-    res.status(201).json({
+    // 🔥 Push order into user.orders
+    await User.findByIdAndUpdate(userId, {
+      $push: { orders: order._id },
+    });
+
+    // ❗ Optional: clear cart
+    await Cart.findOneAndUpdate(
+      { user: userId },
+      { $set: { items: [] } }
+    );
+
+    return res.status(201).json({
       success: true,
       message: "Order placed successfully",
       order,
     });
+
   } catch (error) {
     console.error("Error placing order:", error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Unable to place order",
     });
@@ -88,10 +98,7 @@ export const placeOrder = async (req, res) => {
 ============================ */
 export const getOrders = async (req, res) => {
   try {
-    const userId = req.params.id;
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 5;
-    const skip = (page - 1) * limit;
+    const userId = req?.user.id;
 
     if (!userId) {
       return res.status(400).json({
@@ -99,9 +106,15 @@ export const getOrders = async (req, res) => {
         message: "User ID is required",
       });
     }
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const skip = (page - 1) * limit;
 
     const orders = await Order.find({ user: userId })
-      .populate("items.product", "product_name price image category inStock tags")
+      .populate(
+        "items.product",
+        "product_name price image category inStock tags"
+      )
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
@@ -118,7 +131,9 @@ export const getOrders = async (req, res) => {
       currentPage: page,
       ordersPerPage: limit,
       totalOrders: await Order.countDocuments({ user: userId }),
-      totalPages: Math.ceil(await Order.countDocuments({ user: userId }) / limit),
+      totalPages: Math.ceil(
+        (await Order.countDocuments({ user: userId })) / limit
+      ),
       orders,
       message: "Orders fetched successfully",
     });

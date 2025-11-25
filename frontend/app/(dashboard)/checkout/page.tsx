@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useUser } from "@/context/UserContext";
 import axiosClient from "@/lib/axios";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import OrderSummaryCard from "@/components/shared/OrderSummaryCard";
 import AddressForm from "@/components/shared/AddressForm";
 import PriceBreakdown from "@/components/shared/PriceBreakdown";
-import { useCallback } from "react";
 import { toast } from "sonner";
 import { placeOrder } from "@/lib/order";
 import { useRouter } from "next/navigation";
@@ -32,11 +31,17 @@ export default function CheckoutPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+
+  // Address state
+  const [fullName, setFullName] = useState("");
+  const [address, setAddress] = useState("");
+  const [phone, setPhone] = useState("");
+  const [showAddressModal, setShowAddressModal] = useState(false);
+
   const fetchCart = useCallback(async () => {
     try {
       if (!user) return;
       const res = await axiosClient.get(`/cart/getCart/${user.id}`);
-      console.log(res.data);
       setCartItems(res.data.cart.items);
     } catch (err) {
       console.error("Failed to fetch cart:", err);
@@ -49,6 +54,26 @@ export default function CheckoutPage() {
     if (user) fetchCart();
   }, [user, fetchCart]);
 
+  const submitHandler = async () => {
+    if (!fullName || !address || !phone) {
+      return toast.error("Please fill all address details.");
+    }
+
+    if (!user) return toast.error("User not found");
+
+    const success = await placeOrder(user.id, {
+      fullName,
+      address,
+      phone,
+    });
+
+    if (success) {
+      toast.success("Order placed successfully!");
+      setShowAddressModal(false);
+      router.push("/orders");
+    }
+  };
+
   if (loading || userLoading) {
     return (
       <div className="max-w-4xl mx-auto p-6 space-y-4">
@@ -58,19 +83,12 @@ export default function CheckoutPage() {
     );
   }
 
-  const handlePlaceOrder = async () => {
-    if (!user) return toast.error("User not found");
-    const success = await placeOrder(user.id);
-    if (success) {
-      router.push("/orders"); // or a success page
-    }
-  };
-
   return (
-    <section className="max-w-5xl mx-auto px-4 py-10 space-y-8">
+    <section className="max-w-5xl mx-auto px-4 py-10 space-y-8 relative">
+
       <h1 className="text-3xl font-bold text-gray-800 my-4">🧾 Checkout</h1>
 
-      {/* Cart Items Summary */}
+      {/* Cart Summary */}
       <Card>
         <CardHeader>
           <CardTitle>Review Your Items</CardTitle>
@@ -86,16 +104,54 @@ export default function CheckoutPage() {
         </CardContent>
       </Card>
 
-      {/* Address Form */}
-      <AddressForm />
-
-      {/* Price Breakdown & Final Button */}
+      {/* Price Breakdown */}
       <PriceBreakdown items={cartItems} />
+
       <div className="text-right">
-        <Button onClick={handlePlaceOrder} className="w-full sm:w-auto">
-          Place Order
+        <Button
+          onClick={() => setShowAddressModal(true)}
+          className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700"
+        >
+          Enter Address & Place Order
         </Button>
       </div>
+
+      {/* ================= ADDRESS MODAL ================= */}
+      {showAddressModal && (
+        <div className="fixed inset-0 backdrop-blur-md bg-black/60 flex justify-center items-center z-[500] pointer-events-auto">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 w-[460px] border border-gray-200 pointer-events-auto">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">
+              Enter Delivery Details
+            </h2>
+
+            <AddressForm
+              fullName={fullName}
+              address={address}
+              phone={phone}
+              setFullName={setFullName}
+              setAddress={setAddress}
+              setPhone={setPhone}
+            />
+
+            <div className="flex justify-end gap-4 mt-6">
+              <Button
+                variant="outline"
+                className="px-4 py-2"
+                onClick={() => setShowAddressModal(false)}
+              >
+                Cancel
+              </Button>
+
+              <Button
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white shadow-md"
+                onClick={submitHandler}
+              >
+                Confirm Order
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

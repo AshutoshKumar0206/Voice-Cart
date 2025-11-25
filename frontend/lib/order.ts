@@ -4,11 +4,25 @@ import { toast } from "sonner";
 /**
  * Place order for the current user's cart.
  * @param userId - ID of the user placing the order
+ * @param addressData - contains fullName, address, phone
  */
-export const placeOrder = async (userId: string): Promise<boolean> => {
+export const placeOrder = async (
+  userId: string,
+  addressData: {
+    fullName: string;
+    address: string;
+    phone: string;
+  }
+): Promise<boolean> => {
   try {
     console.log("Placing order for user:", userId);
-    const res = await axiosClient.post(`/order/placeOrder/${userId}`);
+    console.log("Address data:", addressData);
+
+    const res = await axiosClient.post(
+      `/order/placeOrder`,
+      addressData
+    );
+
     if (res.data.success) {
       toast.success("🎉 Order placed successfully!");
       return true;
