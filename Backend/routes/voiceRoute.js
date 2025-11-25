@@ -7,7 +7,7 @@ import { isAuthenticated } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
-router.post("/interpret", isAuthenticated, interpretCommand);
+router.post("/interpret", interpretCommand);
 router.post("/getProductByName", isAuthenticated, getProductsByName);
 
 export default router;

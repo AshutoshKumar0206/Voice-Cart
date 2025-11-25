@@ -223,23 +223,36 @@ export const updateProductStock = async (req, res) => {
 ============================ */
 export const getProductsByTopDeals = async (req, res) => {
   try {
-    const topDeals = await Product.aggregate([{ $sample: { size: 5 } }]);
+    const minRatings = 10; // filter out products with very few ratings
 
-    if (!topDeals || topDeals.length === 0) {
+    const topProducts = await Product.aggregate([
+      {
+        $match: { ratingCount: { $gte: minRatings } } // only products with enough ratings
+      },
+      {
+        $sort: { avgRating: -1 } // highest average rating first
+      },
+      {
+        $limit: 5 // top 5 products
+      }
+    ]);
+
+    if (!topProducts || topProducts.length === 0) {
       return res.status(404).json({
         success: false,
-        message: "No top deals found",
+        message: "No top recommended products found",
       });
     }
 
     res.status(200).json({
       success: true,
-      topDeals,
+      topProducts,
     });
   } catch (error) {
+    console.error(error);
     res.status(500).json({
       success: false,
-      message: "Unable to fetch top deals",
+      message: "Unable to fetch top recommended products",
     });
   }
 };
@@ -250,7 +263,7 @@ export const getProductsByTopDeals = async (req, res) => {
 export const exploreProducts = async (req, res) => {
   try {
     const exploredProducts = await Product.aggregate([
-      { $sample: { size: 8 } },
+      { $sample: { size: 20 } },
     ]);
 
     if (!exploredProducts || exploredProducts.length === 0) {
@@ -289,8 +302,11 @@ export const getProductsByCategory = async (req, res) => {
       });
     }
 
-    const totalProducts = await Product.countDocuments({ category });
-    const categoryProducts = await Product.find({ category })
+    // Case-insensitive regex match for the category
+    const categoryFilter = { category: { $regex: `^${category}$`, $options: "i" } };
+
+    const totalProducts = await Product.countDocuments(categoryFilter);
+    const categoryProducts = await Product.find(categoryFilter)
       .skip(skip)
       .limit(limit);
 
@@ -302,9 +318,11 @@ export const getProductsByCategory = async (req, res) => {
       products: categoryProducts,
     });
   } catch (error) {
+    console.error("Error fetching products by category:", error);
     res.status(500).json({
       success: false,
       message: "Unable to fetch products by category",
     });
   }
 };
+

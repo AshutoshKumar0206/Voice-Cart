@@ -9,6 +9,7 @@ import pendingUserModel from "../model/pendingUser.js";
 import Cart from "../model/cart.js";
 import mongoose from "mongoose";
 import { emailQueue } from "../utils/queue.js";
+import axios from "axios";
 
 /* ============================
       SIGN UP
@@ -314,67 +315,58 @@ export const getMe = async (req, res) => {
 ============================ */
 export const recommendProducts = async (req, res) => {
   try {
-    const userId = req.params.id;
+    const userId = req.user.id;
 
-    if (!userId)
+    if (!userId) {
       return res.status(400).json({
         success: false,
         message: "User ID is required",
       });
+    }
 
+    // Ensure user exists & has a cart — optional check
     const userCart = await Cart.findOne({ user: userId });
 
-    if (!userCart || userCart.items.length === 0)
-      return res.status(404).json({
-        success: false,
-        message: "No products in cart to recommend from",
-      });
+    if (!userCart) {
+      console.log("No cart found for user — still recommending based on behavior model");
+    }
 
-    const recommended = await Product.aggregate([
-      {
-        $facet: {
-          electronics: [
-            { $match: { category: "Electronics" } },
-            { $sample: { size: 3 } },
-          ],
-          fashion: [
-            { $match: { category: "Fashion" } },
-            { $sample: { size: 2 } },
-          ],
-          grocery: [
-            { $match: { category: "Grocery" } },
-            { $sample: { size: 2 } },
-          ],
-          books: [
-            { $match: { category: "Books" } },
-            { $sample: { size: 2 } },
-          ],
-        },
-      },
-      {
-        $project: {
-          recommendedProducts: {
-            $concatArrays: [
-              "$electronics",
-              "$fashion",
-              "$grocery",
-              "$books",
-            ],
-          },
-        },
-      },
-    ]);
+    // STEP 1: request recommendations from Flask SVD service
+    console.log("Sending request → Flask model:", userId);
 
-    res.status(200).json({
-      success: true,
-      recommendedProducts:
-        recommended[0]?.recommendedProducts || [],
+    const flaskResponse = await axios.get("http://127.0.0.1:5000/recommend", {
+      params: { user_id: userId, n: 10 },
     });
+
+    const recommendedList = flaskResponse.data.recommendations;
+
+    if (!recommendedList || recommendedList.length === 0) {
+      return res.status(200).json({
+        success: true,
+        recommendedProducts: [],
+        message: "No recommendations generated",
+      });
+    }
+
+    // recommendedList contains product entries from products.csv
+    // e.g. [{product_id:name, category, price, ...}]
+
+    const productIds = recommendedList.map(item => item.product_id);
+
+    // STEP 2: Fetch actual MongoDB product objects
+    const mongoProducts = await Product.find({ product_id: { $in: productIds } });
+
+    // STEP 3: Return final merged recommendations
+    return res.status(200).json({
+      success: true,
+      recommendedProducts: mongoProducts,
+    });
+
   } catch (error) {
-    console.error("Recommendation Error:", error);
-    res.status(500).json({
+    console.error("Recommendation Error:", error.message);
+    return res.status(500).json({
       success: false,
-      message: "Unable to recommend products",
+      message: "Unable to fetch recommendations",
     });
   }
 };

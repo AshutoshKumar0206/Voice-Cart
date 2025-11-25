@@ -1,11 +1,11 @@
 "use client";
 
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useState } from "react";
 import axiosClient from "@/lib/axios";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -37,76 +37,87 @@ const formSchema = z.object({
 // Score password strength
 const getPasswordScore = (pwd: string) => {
   let score = 0;
-
   if (pwd.length >= 8) score++;
   if (/[A-Z]/.test(pwd)) score++;
   if (/[a-z]/.test(pwd)) score++;
   if (/[0-9]/.test(pwd)) score++;
   if (/[^A-Za-z0-9]/.test(pwd)) score++;
-
-  return score; // score from 0 to 5
+  return score;
 };
 
 type SignUpFormValues = z.infer<typeof formSchema>;
 
 export default function SignUpPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [serverError, setServerError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
 
+  // Grab values from URL if present
+  const nameFromUrl = searchParams.get("name") || "";
+  const emailFromUrl = searchParams.get("email") || "";
+  const phoneFromUrl = searchParams.get("phone") || "";
+  const successFromUrl = searchParams.get("success") === "true";
+
   const form = useForm<SignUpFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      email: "",
-      phone: "",
+      name: nameFromUrl,
+      email: emailFromUrl,
+      phone: phoneFromUrl,
       password: "",
     },
   });
 
   const strengthScore = getPasswordScore(password);
-
   const strengthText =
-    strengthScore <= 2
-      ? "Weak"
-      : strengthScore === 3 || strengthScore === 4
-      ? "Medium"
-      : "Strong";
-
+    strengthScore <= 2 ? "Weak" : strengthScore <= 4 ? "Medium" : "Strong";
   const strengthColor =
     strengthScore <= 2
       ? "bg-red-500"
-      : strengthScore === 3 || strengthScore === 4
+      : strengthScore <= 4
       ? "bg-yellow-500"
       : "bg-green-600";
+  const strengthWidth = [
+    "w-[0%]",
+    "w-[20%]",
+    "w-[40%]",
+    "w-[60%]",
+    "w-[80%]",
+    "w-[100%]",
+  ][strengthScore];
 
-  const strengthWidth = {
-    0: "w-[0%]",
-    1: "w-[20%]",
-    2: "w-[40%]",
-    3: "w-[60%]",
-    4: "w-[80%]",
-    5: "w-[100%]",
-  }[strengthScore];
-
-  const onSubmit = async (data: SignUpFormValues) => {
-    try {
-      setServerError(null);
-
-      const res = await axiosClient.post("/user/signup", data);
-
-      if (res.status === 201) {
-        toast.success("Account created successfully! Please verify your email.");
-        router.push(`/verify-email?email=${data.email}`);
-      } else {
+  const onSubmit = useCallback(
+    async (data: SignUpFormValues) => {
+      try {
+        setServerError(null);
+        const res = await axiosClient.post("/user/signup", data);
+        if (res.status === 201) {
+          toast.success(
+            "Account created successfully! Please verify your email."
+          );
+          router.push(`/verify-email?email=${data.email}`);
+        } else {
+          toast.error("Signup failed. Try again.");
+        }
+      } catch (err: any) {
+        setServerError(
+          err?.response?.data?.message || "Signup failed. Try again."
+        );
         toast.error("Signup failed. Try again.");
       }
-    } catch (err: any) {
-      setServerError(err?.response?.data?.message || "Signup failed. Try again.");
-      toast.error("Signup failed. Try again.");
+    },
+    [router]
+  );
+
+  // Auto-submit if success param exists
+  useEffect(() => {
+    if (successFromUrl) {
+      // Only submit if form is valid
+      form.handleSubmit(onSubmit)();
     }
-  };
+  }, [successFromUrl, form, onSubmit]);
 
   return (
     <section className="min-h-screen w-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-white to-blue-200 px-4 py-12">
@@ -120,7 +131,6 @@ export default function SignUpPage() {
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-
               {/* Name */}
               <FormField
                 control={form.control}
@@ -144,7 +154,11 @@ export default function SignUpPage() {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder="you@example.com" {...field} />
+                      <Input
+                        type="email"
+                        placeholder="you@example.com"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -166,14 +180,13 @@ export default function SignUpPage() {
                 )}
               />
 
-              {/* Password + Strength Meter */}
+              {/* Password */}
               <FormField
                 control={form.control}
                 name="password"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Password</FormLabel>
-
                     <div className="relative">
                       <FormControl>
                         <Input
@@ -187,8 +200,6 @@ export default function SignUpPage() {
                           className="pr-10"
                         />
                       </FormControl>
-
-                      {/* Toggle Show */}
                       <button
                         type="button"
                         className="absolute inset-y-0 right-2 flex items-center text-sm text-gray-500"
@@ -197,8 +208,6 @@ export default function SignUpPage() {
                         {showPassword ? "Hide" : "Show"}
                       </button>
                     </div>
-
-                    {/* Strength Meter */}
                     {password.length > 0 && (
                       <div className="mt-2">
                         <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
@@ -222,17 +231,21 @@ export default function SignUpPage() {
                         </p>
                       </div>
                     )}
-
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
               {/* Server error */}
-              {serverError && <p className="text-sm text-red-600">{serverError}</p>}
+              {serverError && (
+                <p className="text-sm text-red-600">{serverError}</p>
+              )}
 
               {/* Submit */}
-              <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+              <Button
+                type="submit"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+              >
                 Sign Up
               </Button>
             </form>
@@ -241,7 +254,10 @@ export default function SignUpPage() {
           {/* Footer */}
           <p className="mt-6 text-sm text-center text-gray-600">
             Already have an account?{" "}
-            <Link href="/signin" className="text-blue-600 font-medium hover:underline">
+            <Link
+              href="/signin"
+              className="text-blue-600 font-medium hover:underline"
+            >
               Sign In
             </Link>
           </p>

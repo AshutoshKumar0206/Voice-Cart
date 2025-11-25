@@ -6,6 +6,13 @@ import gsap from "gsap";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useUser } from "@/context/UserContext";
+import {Google_Sans_Code} from "next/font/google"
+
+const googleSansFont = Google_Sans_Code({
+  subsets: ["latin"],
+  weight: "400",
+  fallback: ["Arial", "sans-serif"],
+})
 
 export default function Hero() {
   const { user } = useUser();
@@ -42,7 +49,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative w-full overflow-hidden h-screen">
+    <section className={`relative w-full overflow-hidden h-screen ${googleSansFont.className}`}>
       {/* IMAGE BACKGROUND */}
       <div id="hero-image" className="absolute inset-0 -z-10 transition-all">
         <Image

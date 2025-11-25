@@ -10,6 +10,13 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/context/UserContext";
 import { useCart } from "@/context/CartContext";
+import {Google_Sans_Code} from "next/font/google"
+
+const googleSansFont = Google_Sans_Code({
+  subsets: ["latin"],
+  weight: "600",
+  fallback: ["Arial", "sans-serif"],
+})
 
 export default function Navbar() {
   const navbarRef = useRef<HTMLDivElement>(null);
@@ -55,7 +62,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
         {/* Logo */}
         <div
-          className="text-2xl font-bold cursor-pointer"
+          className={`text-2xl font-bold cursor-pointer ${googleSansFont.className}`}
           onClick={() => {
             if(user) router.push('/dashboard');
             else router.push("/")
