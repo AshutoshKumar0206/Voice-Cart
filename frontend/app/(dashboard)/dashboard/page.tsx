@@ -76,7 +76,7 @@ export default function DashboardPage() {
     const fetchExplore = async () => {
       try {
         const res: any = await axiosClient.get(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/user/recommendProducts`
+          `/user/recommendProducts`
         );
         console.log(res.data)
         const data = res.data;
