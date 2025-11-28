@@ -101,9 +101,11 @@ export const createProduct = async (req, res) => {
 ============================ */
 export const getAllProducts = async (req, res) => {
   try {
-    const limit = parseInt(req.query.limit) || 5;
-    const page = parseInt(req.query.page) || 1;
+    const limit = Number(req.query.limit) > 0 ? Number(req.query.limit) : 12;
+    const page = Number(req.query.page) > 0 ? Number(req.query.page) : 1;
     const skip = (page - 1) * limit;
+
+    console.log("🔥 Requested PAGE:", page, " LIMIT:", limit, " SKIP:", skip);
 
     const totalProducts = await Product.countDocuments();
     const products = await Product.find().skip(skip).limit(limit);
@@ -116,6 +118,7 @@ export const getAllProducts = async (req, res) => {
       products,
     });
   } catch (error) {
+    console.error("❌ Error:", error);
     res.status(500).json({
       success: false,
       message: "Unable to fetch products",

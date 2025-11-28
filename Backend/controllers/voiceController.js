@@ -129,6 +129,10 @@ export const interpretCommand = async (req, res) => {
         return res.status(200).json({ success: true, products });
       }
 
+      case "redirect": {
+        return res.status(200).json({success: true, result: parsedText.location})
+      }
+
       case "place_order": {
         return await placeOrder(req, res);
       }

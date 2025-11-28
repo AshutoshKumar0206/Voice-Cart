@@ -160,7 +160,7 @@ export default function DashboardPage() {
       </section>
 
       <section className="space-y-6">
-        <h2 className="text-2xl font-semibold">🧠 Recommended for You</h2>
+        <h2 className="text-2xl font-semibold">Recommended for You</h2>
 
         {productLoading ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">

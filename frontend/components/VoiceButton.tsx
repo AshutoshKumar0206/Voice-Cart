@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { usePathname, useRouter } from "next/navigation";
 import axiosClient from "@/lib/axios";
 import { Card, CardContent } from "./ui/card";
+import { useCart } from "@/context/CartContext";
 
 type SpeechRecognition = typeof window extends { SpeechRecognition: infer T }
   ? T
@@ -33,6 +34,7 @@ export default function VoiceInput() {
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const router = useRouter();
   const pathname = usePathname();
+  const {refreshCart} = useCart();
 
   const startRecognition = () => {
     const SpeechRecognition =
@@ -93,6 +95,9 @@ export default function VoiceInput() {
         if(data.products && data.products.length > 0){
           router.push(`/search?q=${data.products[0].product_name.toLowerCase()}`);
         }
+        else if(data.userCart){
+          refreshCart();
+        }
         else if(data.signin){
           if(pathname === '/signin'){
             router.push('/signin?success=true')
@@ -117,6 +122,12 @@ export default function VoiceInput() {
           else if(pathname === '/signup'){
             router.push(`/signup?name=${info.name}&email=${info.email}&phone=${info.phone}&password=${info.password}`)
           }
+        }
+        else if(data.result){
+          router.push('/cart');
+        }
+        else if(data.order){
+          router.push('/orders')
         }
       }
     } catch (error) {
