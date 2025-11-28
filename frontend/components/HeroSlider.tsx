@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import gsap from "gsap";
+import { useRouter } from "next/navigation";
 
 const images = [
   "/hero/slide1.png",
@@ -15,6 +16,7 @@ const images = [
 export default function HeroSlider() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const router = useRouter();
 
   useEffect(() => {
     const container = containerRef.current;
@@ -54,6 +56,10 @@ export default function HeroSlider() {
     <div
       className="relative w-full h-64 md:h-96 rounded-3xl overflow-hidden shadow-lg"
       ref={containerRef}
+      onClick={() => {
+        console.log("clicked");
+        router.push("/products");
+      }}
     >
       {images.map((src, index) => (
         <Image

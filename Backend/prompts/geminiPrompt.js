@@ -38,6 +38,9 @@ Output: {"intent": "sign_in"}
 Input: "Sign Up"
 Output: {"intent": "sign_up"}
 
+Input: "Go to cart"
+Output: {"intent": "redirect", "location": "cart"}
+
 Input: "Name Aditya Email xyz@gmail.com Phone 9999999999 Password xyz123
 Output: {"intent": "information", "info": {"name": "Aditya", "email": "xyz@gmail.com", "phone": "9999999999", "password": "xyz123"}}
 

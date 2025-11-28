@@ -25,10 +25,18 @@ export default function ProductsPage() {
   const fetchProducts = async (page: number) => {
     try {
       setLoading(true);
-      const res = await axiosClient.get(`/products/getAllProducts?page=${page}&limit=12`);
+      console.log("Fetching:", `/products/getAllProducts?page=${page}&limit=12`);
+
+      const res = await axiosClient.get(
+        `/products/getAllProducts?page=${page}&limit=12`
+      );
+
+      console.log("✔ got products:", res.data.products.length);
+
       setProducts(res.data.products);
       setTotalPages(res.data.totalPages);
     } catch (err) {
+      console.error(err);
       toast.error("Failed to load products");
     } finally {
       setLoading(false);
@@ -61,7 +69,9 @@ export default function ProductsPage() {
         <Button onClick={handlePrev} disabled={page === 1}>
           Previous
         </Button>
-        <span className="text-sm mt-2">Page {page} of {totalPages}</span>
+        <span className="text-sm mt-2">
+          Page {page} of {totalPages}
+        </span>
         <Button onClick={handleNext} disabled={page === totalPages}>
           Next
         </Button>
